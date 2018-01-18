@@ -129,13 +129,13 @@ $(document).ready(function () {
 <span class="kw">dim</span>(cattle<span class="op">$</span>geno)
 <span class="kw">set.seed</span>(<span class="dv">100</span>)
 cattleC &lt;-<span class="st"> </span><span class="kw">codeGeno</span>(cattle,<span class="dt">impute=</span><span class="ot">TRUE</span>,<span class="dt">impute.type=</span><span class="st">&quot;random&quot;</span>, <span class="dt">reference.allele =</span> <span class="st">&quot;minor&quot;</span>)</code></pre></div>
-<p>Select SNP markers only on chromosome 1. Answer the six questions below using the <code>W</code> variable, which is the SNP genotype matrix.</p>
+<p>Select SNP markers only on chromosome 1. Answer the six questions below using the <code>W</code> variable, which is a SNP genotype matrix.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">W &lt;-<span class="st"> </span>cattleC<span class="op">$</span>geno[,<span class="kw">which</span>(cattleC<span class="op">$</span>map<span class="op">==</span><span class="dv">1</span>)]
 <span class="kw">dim</span>(W)</code></pre></div>
 </div>
 <div id="question-1" class="section level2">
 <h2>Question 1</h2>
-<p>Compute the allele freqeuncy of SNP markers. Recall that the expectation of genotype, <span class="math inline">\(E(W)\)</span>, is given by <span class="math inline">\(2p\)</span>, where <span class="math inline">\(p\)</span> is the frequency of reference allele. Verify that <span class="math inline">\(2p\)</span> is equal to the mean of each genotype obtained from the <code>colMeans()</code> function.</p>
+<p>Compute the allele frequency of SNP markers. Recall that the expectation of genotype, <span class="math inline">\(E(W)\)</span>, is given by <span class="math inline">\(2p\)</span>, where <span class="math inline">\(p\)</span> is the frequency of reference allele. Verify that <span class="math inline">\(2p\)</span> is equal to the mean of each genotype obtained from the <code>colMeans()</code> function.</p>
 </div>
 <div id="question-2" class="section level2">
 <h2>Question 2</h2>
@@ -143,7 +143,7 @@ cattleC &lt;-<span class="st"> </span><span class="kw">codeGeno</span>(cattle,<s
 </div>
 <div id="question-3" class="section level2">
 <h2>Question 3</h2>
-<p>Creae a new marker matrix <code>X</code> from <code>W</code> and recode markers so that three genotypes <span class="math inline">\(AA\)</span>, <span class="math inline">\(Aa\)</span>, and <span class="math inline">\(aa\)</span> are coded as 1, 0, and -1, respectively.</p>
+<p>Create a new marker matrix <code>X</code> from <code>W</code> and recode markers so that three genotypes <span class="math inline">\(AA\)</span>, <span class="math inline">\(Aa\)</span>, and <span class="math inline">\(aa\)</span> are coded as 1, 0, and -1, respectively.</p>
 <p>Recall that the expectation of genotype, <span class="math inline">\(E(X)\)</span>, is given by <span class="math inline">\(2p-1\)</span>, where <span class="math inline">\(p\)</span> is the frequency of reference allele. Verify that <span class="math inline">\(2p-1\)</span> is equal to the mean of each genotype obtained from the <code>colMeans()</code> function.</p>
 </div>
 <div id="question-4" class="section level2">
@@ -152,11 +152,11 @@ cattleC &lt;-<span class="st"> </span><span class="kw">codeGeno</span>(cattle,<s
 </div>
 <div id="question-5" class="section level2">
 <h2>Question 5</h2>
-<p>Verify that no matter how we code markers, centered marker codes, <span class="math inline">\(W - E(W)\)</span> and <span class="math inline">\(X - E(X)\)</span>, are the same.</p>
+<p>Verify that no matter how we code markers, centered marker codes, <span class="math inline">\(W - E(W)\)</span> and <span class="math inline">\(X - E(X)\)</span>, remain the same.</p>
 </div>
 <div id="question-6" class="section level2">
 <h2>Question 6</h2>
-<p>We will recode the SNP genotypes so that now the major allele is treated as reference allele. Store the new coding into the <code>W2</code> variable.</p>
+<p>We will recode the SNP genotypes so that now the major allele is treated as a reference allele. Store the new coding into the <code>W2</code> variable.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">W2 &lt;-<span class="st"> </span>W
 W2[W2<span class="op">==</span><span class="dv">0</span>] &lt;-<span class="st"> </span><span class="dv">3</span>
 W2[W2<span class="op">==</span><span class="dv">2</span>] &lt;-<span class="st"> </span><span class="dv">0</span>

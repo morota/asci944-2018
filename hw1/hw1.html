@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<meta charset="utf-8">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="pandoc" />
+
+<meta name="author" content="Gota Morota" />
+
+<meta name="date" content="2017-01-18" />
+
+<title>ASCI 944 / STAT 844 Quantitative Methods for Genomics of Complex Traits</title>
+
+<script src="hw1_files/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="hw1_files/bootstrap-3.3.6/css/bootstrap.min.css" rel="stylesheet" />
+<script src="hw1_files/bootstrap-3.3.6/js/bootstrap.min.js"></script>
+<script src="hw1_files/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<script src="hw1_files/navigation-1.1/tabsets.js"></script>
+<script src="hw1_files/navigation-1.1/codefolding.js"></script>
+<link href="hw1_files/magnific-popup-1.1.0/magnific-popup.css" rel="stylesheet" />
+<script src="hw1_files/magnific-popup-1.1.0/jquery.magnific-popup.min.js"></script>
+<link href="hw1_files/readthedown-0.1/readthedown.css" rel="stylesheet" />
+<script src="hw1_files/readthedown-0.1/readthedown.js"></script>
+
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+div.sourceCode { overflow-x: auto; }
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; background-color: #ffffff; color: #1f1c1b; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; background-color: #ffffff; color: #a0a0a0; border-right: 1px solid #a0a0a0; }
+td.sourceCode { padding-left: 5px; }
+pre, code { color: #1f1c1b; background-color: #ffffff; }
+code > span.kw { color: #1f1c1b; font-weight: bold; } /* Keyword */
+code > span.dt { color: #0057ae; } /* DataType */
+code > span.dv { color: #b08000; } /* DecVal */
+code > span.bn { color: #b08000; } /* BaseN */
+code > span.fl { color: #b08000; } /* Float */
+code > span.cn { color: #aa5500; } /* Constant */
+code > span.ch { color: #924c9d; } /* Char */
+code > span.sc { color: #3daee9; } /* SpecialChar */
+code > span.st { color: #bf0303; } /* String */
+code > span.vs { color: #bf0303; } /* VerbatimString */
+code > span.ss { color: #ff5500; } /* SpecialString */
+code > span.im { color: #ff5500; } /* Import */
+code > span.co { color: #898887; } /* Comment */
+code > span.do { color: #607880; } /* Documentation */
+code > span.an { color: #ca60ca; } /* Annotation */
+code > span.cv { color: #0095ff; } /* CommentVar */
+code > span.ot { color: #006e28; } /* Other */
+code > span.fu { color: #644a9b; } /* Function */
+code > span.va { color: #0057ae; } /* Variable */
+code > span.cf { color: #1f1c1b; font-weight: bold; } /* ControlFlow */
+code > span.op { color: #1f1c1b; } /* Operator */
+code > span.bu { color: #644a9b; font-weight: bold; } /* BuiltIn */
+code > span.ex { color: #0095ff; font-weight: bold; } /* Extension */
+code > span.pp { color: #006e28; } /* Preprocessor */
+code > span.at { color: #0057ae; } /* Attribute */
+code > span.re { color: #0057ae; } /* RegionMarker */
+code > span.in { color: #b08000; } /* Information */
+code > span.wa { color: #bf0303; } /* Warning */
+code > span.al { color: #bf0303; font-weight: bold; } /* Alert */
+code > span.er { color: #bf0303; text-decoration: underline; } /* Error */
+code > span. { color: #1f1c1b; } /* Normal */
+</style>
+
+
+</head>
+
+<body>
+
+
+<div id="content" data-toggle="wy-nav-shift">
+
+<!-- tabsets -->
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+</script>
+
+<!-- code folding -->
+
+<nav id="nav-top" role="navigation" aria-label="top navigation">
+    <a role="button" href="#" data-toggle="wy-nav-top"><span class="glyphicon glyphicon-menu-hamburger"></span></a>
+</nav>
+
+
+<div id="header">
+<h1 class="title">ASCI 944 / STAT 844 Quantitative Methods for Genomics of Complex Traits</h1>
+<h1 class="subtitle">Homework assignment 1</h1>
+</div>
+
+
+<div id="table-of-contents">
+    <h2><a href="#content">ASCI 944 / STAT 844 Quantitative Methods for Genomics of Complex Traits</a></h2>
+    <div id="text-table-of-contents">
+      <ul>
+      <li><a href="#due-date">Due date</a></li>
+      <li><a href="#data">Data</a></li>
+      <li><a href="#question-1">Question 1</a></li>
+      <li><a href="#question-2">Question 2</a></li>
+      <li><a href="#question-3">Question 3</a></li>
+      <li><a href="#question-4">Question 4</a></li>
+      <li><a href="#question-5">Question 5</a></li>
+      <li><a href="#question-6">Question 6</a></li>
+      </ul>
+    </div>
+</div>
+
+<div id="main">
+<div id="due-date" class="section level2">
+<h2>Due date</h2>
+<p>Thursday, February 1, 5pm</p>
+</div>
+<div id="data" class="section level2">
+<h2>Data</h2>
+<p>For this assignment, we are going to use the <code>cattle</code> data included in the synbreedData package. Learn more about the <a href="http://www.synbreed.tum.de/">Synbreed project</a> and <a href="http://synbreed.r-forge.r-project.org/">synbreed R packages</a>.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(synbreed)
+<span class="kw">library</span>(synbreedData)
+<span class="kw">help</span>(<span class="dt">package=</span><span class="st">&quot;synbreedData&quot;</span>)
+<span class="kw">data</span>(cattle)
+?cattle
+<span class="kw">dim</span>(cattle<span class="op">$</span>geno)
+<span class="kw">set.seed</span>(<span class="dv">100</span>)
+cattleC &lt;-<span class="st"> </span><span class="kw">codeGeno</span>(cattle,<span class="dt">impute=</span><span class="ot">TRUE</span>,<span class="dt">impute.type=</span><span class="st">&quot;random&quot;</span>, <span class="dt">reference.allele =</span> <span class="st">&quot;minor&quot;</span>)</code></pre></div>
+<p>Select SNP markers only on chromosome 1. Answer the six questions below using the <code>W</code> variable, which is the SNP genotype matrix.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">W &lt;-<span class="st"> </span>cattleC<span class="op">$</span>geno[,<span class="kw">which</span>(cattleC<span class="op">$</span>map<span class="op">==</span><span class="dv">1</span>)]
+<span class="kw">dim</span>(W)</code></pre></div>
+</div>
+<div id="question-1" class="section level2">
+<h2>Question 1</h2>
+<p>Compute the allele freqeuncy of SNP markers. Recall that the expectation of genotype, <span class="math inline">\(E(W)\)</span>, is given by <span class="math inline">\(2p\)</span>, where <span class="math inline">\(p\)</span> is the frequency of reference allele. Verify that <span class="math inline">\(2p\)</span> is equal to the mean of each genotype obtained from the <code>colMeans()</code> function.</p>
+</div>
+<div id="question-2" class="section level2">
+<h2>Question 2</h2>
+<p>Recall that the variance of genotype, <span class="math inline">\(Var(W)\)</span>, is given by <span class="math inline">\(2p(1-p)\)</span>. Verify that <span class="math inline">\(2p(1-p)\)</span> is close to the variance of each genotype obtained from the <code>var()</code> function.</p>
+</div>
+<div id="question-3" class="section level2">
+<h2>Question 3</h2>
+<p>Creae a new marker matrix <code>X</code> from <code>W</code> and recode markers so that three genotypes <span class="math inline">\(AA\)</span>, <span class="math inline">\(Aa\)</span>, and <span class="math inline">\(aa\)</span> are coded as 1, 0, and -1, respectively.</p>
+<p>Recall that the expectation of genotype, <span class="math inline">\(E(X)\)</span>, is given by <span class="math inline">\(2p-1\)</span>, where <span class="math inline">\(p\)</span> is the frequency of reference allele. Verify that <span class="math inline">\(2p-1\)</span> is equal to the mean of each genotype obtained from the <code>colMeans()</code> function.</p>
+</div>
+<div id="question-4" class="section level2">
+<h2>Question 4</h2>
+<p>Recall that the variance of genotype, <span class="math inline">\(Var(X)\)</span>, remains the same and is given by <span class="math inline">\(2p(1-p)\)</span>. Verify that <span class="math inline">\(2p(1-p)\)</span> is close to the variance of each genotype obtained from the <code>var()</code> function.</p>
+</div>
+<div id="question-5" class="section level2">
+<h2>Question 5</h2>
+<p>Verify that no matter how we code markers, centered marker codes, <span class="math inline">\(W - E(W)\)</span> and <span class="math inline">\(X - E(X)\)</span>, are the same.</p>
+</div>
+<div id="question-6" class="section level2">
+<h2>Question 6</h2>
+<p>We will recode the SNP genotypes so that now the major allele is treated as reference allele. Store the new coding into the <code>W2</code> variable.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">W2 &lt;-<span class="st"> </span>W
+W2[W2<span class="op">==</span><span class="dv">0</span>] &lt;-<span class="st"> </span><span class="dv">3</span>
+W2[W2<span class="op">==</span><span class="dv">2</span>] &lt;-<span class="st"> </span><span class="dv">0</span>
+W2[W2<span class="op">==</span><span class="dv">3</span>] &lt;-<span class="st"> </span><span class="dv">2</span></code></pre></div>
+<p>Compute the allele freqeuncy of SNP markers using <code>W2</code>. Compare your result with the allele frequency obtained from <code>W</code>.</p>
+</div>
+</div>
+
+
+</div>
+
+<div id="postamble" data-toggle="wy-nav-shift" class="status">
+<p class="author"><span class="glyphicon glyphicon-user"></span> Gota Morota</p>
+<p class="date"><span class="glyphicon glyphicon-calendar"></span> January 18, 2017</p>
+</div>
+
+
+<script>
+$(document).ready(function () {
+ 	  });
+</script>
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

@@ -115,7 +115,7 @@ W &lt;-<span class="st"> </span>mice.X[, <span class="dv">1</span><span class="o
 </div>
 <div id="genetics-package" class="section level2">
 <h2>genetics package</h2>
-<p>Compute <span class="math inline">\(r^2\)</span> of Hill and Robertson (<a href="https://link.springer.com/article/10.1007/BF01245622">1968</a>) using the <a href="https://cran.r-project.org/web/packages/genetics/index.html">genetics</a> package.</p>
+<p>We will compute <span class="math inline">\(r^2\)</span> of Hill and Robertson (<a href="https://link.springer.com/article/10.1007/BF01245622">1968</a>) using the <a href="https://cran.r-project.org/web/packages/genetics/index.html">genetics</a> package.</p>
 <p>Approach 1</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(genetics)
 G &lt;-<span class="st"> </span><span class="kw">makeGenotypes</span>(W, <span class="dt">convert =</span> <span class="kw">c</span>(<span class="kw">colnames</span>(W)), <span class="dt">method =</span> as.genotype.allele.count)

@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<meta charset="utf-8">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="pandoc" />
+
+<meta name="author" content="Gota Morota" />
+
+
+<title>Singular Value Decomposition</title>
+
+<script src="day10_files/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="day10_files/bootstrap-3.3.6/css/bootstrap.min.css" rel="stylesheet" />
+<script src="day10_files/bootstrap-3.3.6/js/bootstrap.min.js"></script>
+<script src="day10_files/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<script src="day10_files/navigation-1.1/tabsets.js"></script>
+<script src="day10_files/navigation-1.1/codefolding.js"></script>
+<link href="day10_files/magnific-popup-1.1.0/magnific-popup.css" rel="stylesheet" />
+<script src="day10_files/magnific-popup-1.1.0/jquery.magnific-popup.min.js"></script>
+<link href="day10_files/readthedown-0.1/readthedown.css" rel="stylesheet" />
+<script src="day10_files/readthedown-0.1/readthedown.js"></script>
+
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+div.sourceCode { overflow-x: auto; }
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; background-color: #ffffff; color: #1f1c1b; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; background-color: #ffffff; color: #a0a0a0; border-right: 1px solid #a0a0a0; }
+td.sourceCode { padding-left: 5px; }
+pre, code { color: #1f1c1b; background-color: #ffffff; }
+code > span.kw { color: #1f1c1b; font-weight: bold; } /* Keyword */
+code > span.dt { color: #0057ae; } /* DataType */
+code > span.dv { color: #b08000; } /* DecVal */
+code > span.bn { color: #b08000; } /* BaseN */
+code > span.fl { color: #b08000; } /* Float */
+code > span.cn { color: #aa5500; } /* Constant */
+code > span.ch { color: #924c9d; } /* Char */
+code > span.sc { color: #3daee9; } /* SpecialChar */
+code > span.st { color: #bf0303; } /* String */
+code > span.vs { color: #bf0303; } /* VerbatimString */
+code > span.ss { color: #ff5500; } /* SpecialString */
+code > span.im { color: #ff5500; } /* Import */
+code > span.co { color: #898887; } /* Comment */
+code > span.do { color: #607880; } /* Documentation */
+code > span.an { color: #ca60ca; } /* Annotation */
+code > span.cv { color: #0095ff; } /* CommentVar */
+code > span.ot { color: #006e28; } /* Other */
+code > span.fu { color: #644a9b; } /* Function */
+code > span.va { color: #0057ae; } /* Variable */
+code > span.cf { color: #1f1c1b; font-weight: bold; } /* ControlFlow */
+code > span.op { color: #1f1c1b; } /* Operator */
+code > span.bu { color: #644a9b; font-weight: bold; } /* BuiltIn */
+code > span.ex { color: #0095ff; font-weight: bold; } /* Extension */
+code > span.pp { color: #006e28; } /* Preprocessor */
+code > span.at { color: #0057ae; } /* Attribute */
+code > span.re { color: #0057ae; } /* RegionMarker */
+code > span.in { color: #b08000; } /* Information */
+code > span.wa { color: #bf0303; } /* Warning */
+code > span.al { color: #bf0303; font-weight: bold; } /* Alert */
+code > span.er { color: #bf0303; text-decoration: underline; } /* Error */
+code > span. { color: #1f1c1b; } /* Normal */
+</style>
+
+
+</head>
+
+<body>
+
+
+<div id="content" data-toggle="wy-nav-shift">
+
+<!-- tabsets -->
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+</script>
+
+<!-- code folding -->
+<script>
+$(document).ready(function () {
+  window.initializeCodeFolding("hide" === "show");
+});
+</script>
+
+<nav id="nav-top" role="navigation" aria-label="top navigation">
+    <a role="button" href="#" data-toggle="wy-nav-top"><span class="glyphicon glyphicon-menu-hamburger"></span></a>
+</nav>
+
+<div class="btn-group pull-right">
+<button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span class="text-muted">Code</span> <span class="text-muted caret"></span></button>
+<ul class="dropdown-menu" style="min-width: 50px;">
+<li><a id="rmd-show-all-code" href="#">Show All</a></li>
+<li><a id="rmd-hide-all-code" href="#">Hide All</a></li>
+</ul>
+</div>
+
+<div id="header">
+<h1 class="title">Singular Value Decomposition</h1>
+</div>
+
+
+<div id="table-of-contents">
+    <h2><a href="#content">Singular Value Decomposition</a></h2>
+    <div id="text-table-of-contents">
+      <ul>
+      <li><a href="#mice-data">Mice data</a></li>
+      <li><a href="#svd">SVD</a></li>
+      <li><a href="#examples">Examples</a></li>
+      <li><a href="#marker-effects">Marker effects</a></li>
+      </ul>
+    </div>
+</div>
+
+<div id="main">
+<div id="mice-data" class="section level2">
+<h2>Mice data</h2>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(BGLR)
+<span class="kw">data</span>(mice)
+W &lt;-<span class="st"> </span>mice.X[<span class="dv">1</span><span class="op">:</span><span class="dv">7</span>, <span class="dv">1</span><span class="op">:</span><span class="dv">3</span>]</code></pre></div>
+</div>
+<div id="svd" class="section level2">
+<h2>SVD</h2>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">UDV &lt;-<span class="st"> </span><span class="kw">svd</span>(W)
+
+<span class="co"># left singular vectors</span>
+<span class="kw">dim</span>(UDV<span class="op">$</span>u)
+UDV<span class="op">$</span>u
+
+<span class="co"># singular values</span>
+<span class="kw">length</span>(UDV<span class="op">$</span>d)
+UDV<span class="op">$</span>d
+
+<span class="co"># right singular vectors</span>
+<span class="kw">dim</span>(UDV<span class="op">$</span>v)
+UDV<span class="op">$</span>v</code></pre></div>
+</div>
+<div id="examples" class="section level2">
+<h2>Examples</h2>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># Reconstruct W</span>
+W2 &lt;-<span class="st"> </span>UDV<span class="op">$</span>u <span class="op">%*%</span><span class="st"> </span><span class="kw">diag</span>(UDV<span class="op">$</span>d) <span class="op">%*%</span><span class="st"> </span><span class="kw">t</span>(UDV<span class="op">$</span>v)
+W
+W2
+<span class="kw">all.equal</span>(<span class="kw">c</span>(W), <span class="kw">c</span>(W2), <span class="dt">tol =</span> <span class="fl">1e-04</span>)
+
+<span class="kw">t</span>(UDV<span class="op">$</span>u) <span class="op">%*%</span><span class="st"> </span>UDV<span class="op">$</span>u  <span class="co"># U&#39;U</span>
+<span class="kw">t</span>(UDV<span class="op">$</span>v) <span class="op">%*%</span><span class="st"> </span>UDV<span class="op">$</span>v  <span class="co"># V&#39;V</span>
+UDV<span class="op">$</span>v <span class="op">%*%</span><span class="st"> </span><span class="kw">t</span>(UDV<span class="op">$</span>v)  <span class="co"># VV&#39;</span>
+UDV<span class="op">$</span>u <span class="op">%*%</span><span class="st"> </span><span class="kw">t</span>(UDV<span class="op">$</span>u)  <span class="co"># UU&#39;</span>
+
+<span class="kw">t</span>(UDV<span class="op">$</span>v)  <span class="co"># V&#39;</span>
+<span class="kw">solve</span>(UDV<span class="op">$</span>v)  <span class="co"># V^{-1}</span>
+
+<span class="kw">solve</span>(<span class="kw">t</span>(UDV<span class="op">$</span>v))  <span class="co"># V&#39;^{-1}</span>
+UDV<span class="op">$</span>v  <span class="co"># V</span></code></pre></div>
+</div>
+<div id="marker-effects" class="section level2">
+<h2>Marker effects</h2>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># Phenotype</span>
+y &lt;-<span class="st"> </span>mice.pheno<span class="op">$</span>Obesity.BMI[<span class="dv">1</span><span class="op">:</span><span class="dv">7</span>]
+
+<span class="co"># Standard OLS</span>
+<span class="kw">solve</span>(<span class="kw">t</span>(W) <span class="op">%*%</span><span class="st"> </span>W) <span class="op">%*%</span><span class="st"> </span><span class="kw">t</span>(W) <span class="op">%*%</span><span class="st"> </span>y
+
+<span class="co"># SVD-based OLS</span>
+UDV<span class="op">$</span>v <span class="op">%*%</span><span class="st"> </span><span class="kw">solve</span>(<span class="kw">diag</span>(UDV<span class="op">$</span>d)) <span class="op">%*%</span><span class="st"> </span><span class="kw">t</span>(UDV<span class="op">$</span>u) <span class="op">%*%</span><span class="st"> </span>y</code></pre></div>
+</div>
+</div>
+
+
+</div>
+
+<div id="postamble" data-toggle="wy-nav-shift" class="status">
+<p class="author"><span class="glyphicon glyphicon-user"></span> Gota Morota</p>
+<p class="date"><span class="glyphicon glyphicon-calendar"></span> February 8, 2018</p>
+</div>
+
+
+<script>
+$(document).ready(function () {
+ 	  });
+</script>
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

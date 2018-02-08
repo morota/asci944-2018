@@ -1,0 +1,87 @@
+---
+title: "Singular Value Decomposition"
+author: "Gota Morota"
+date: "February 8, 2018"
+output:
+  rmdformats::readthedown:
+    highlight: kate
+    self_contained: false
+    code_folding: hide
+---
+
+
+```{r knitr_init, echo=FALSE, cache=FALSE}
+library(knitr)
+library(rmdformats)
+
+## Global options
+options(max.print="75")
+opts_chunk$set(echo=TRUE,
+	             cache=TRUE,
+               prompt=FALSE,
+               tidy=TRUE,
+               comment=NA,
+               message=FALSE,
+               warning=FALSE)
+opts_knit$set(width=75)
+```
+
+
+## Mice data
+```{r, eval=FALSE}
+library(BGLR)
+data(mice)
+W <- mice.X[1:7, 1:3]
+```
+
+## SVD
+```{r, eval=FALSE}
+UDV <- svd(W)
+
+# left singular vectors
+dim(UDV$u)
+UDV$u
+
+# singular values
+length(UDV$d)
+UDV$d
+
+# right singular vectors 
+dim(UDV$v)
+UDV$v
+```
+
+
+## Examples
+```{r, eval=FALSE}
+# Reconstruct W
+W2 <- UDV$u %*% diag(UDV$d) %*% t(UDV$v)
+W
+W2
+all.equal(c(W), c(W2), tol=0.0001)
+
+t(UDV$u) %*% UDV$u # U'U
+t(UDV$v) %*% UDV$v # V'V
+UDV$v %*% t(UDV$v) # VV'
+UDV$u %*% t(UDV$u) # UU'
+
+t(UDV$v) # V'
+solve(UDV$v) # V^{-1}
+
+solve(t(UDV$v)) # V'^{-1}
+UDV$v # V
+```
+
+## Marker effects
+```{r, eval=FALSE}
+# Phenotype
+y <- mice.pheno$Obesity.BMI[1:7]
+  
+# Standard OLS
+solve(t(W) %*% W) %*% t(W) %*% y
+
+# SVD-based OLS
+UDV$v %*% solve(diag(UDV$d)) %*% t(UDV$u) %*% y
+```
+
+

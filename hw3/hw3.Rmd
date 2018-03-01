@@ -1,0 +1,297 @@
+---
+title: "ASCI 944 / STAT 844 Quantitative Methods for Genomics of Complex Traits"
+subtitle: "Homework assignment 3"
+author: "Gota Morota"
+date: "March 1, 2018"
+output:
+  rmdformats::readthedown:
+    highlight: kate
+    self_contained: false
+---
+
+```{r knitr_init, echo=FALSE, cache=FALSE}
+library(knitr)
+library(rmdformats)
+
+## Global options
+options(max.print="75")
+opts_chunk$set(echo=TRUE,
+	             cache=TRUE,
+               prompt=FALSE,
+               tidy=TRUE,
+               comment=NA,
+               message=FALSE,
+               warning=FALSE)
+opts_knit$set(width=75)
+```
+
+### Due date
+Thursday, March 13, 5pm
+
+# Arabidopsis data
+We will analyze Arabidopsis recombinant inbred lines available at the [Bay-0 x Shahdara](http://publiclines.versailles.inra.fr/page/33) project. 
+Download the [phenotypic](http://publiclines.versailles.inra.fr/ijpbinfo/publiclines/33/BayxSha_PublishedPheno.xls) and [genotypic](http://publiclines.versailles.inra.fr/ijpbinfo/publiclines/33/BayxSha_2_Genotypes.xls) data. The target trait in this homework assignment is <span style="color:red"> Flowering time in Long Days</span> measured as the number of days between germination and bolting (the beginning of the inflorescence growth). You can learn more about the Bay-0 x Shahdara population in [Loudet et al., (2002)](http://dx.doi.org/10.1007/s00122-001-0825-9). 
+
+```{r, warning=FALSE, eval=FALSE}
+library(readxl)
+# phenotypes 
+bayxshaY <- read_excel("BayxSha_PublishedPheno.xls", col_names=FALSE, sheet=1, skip=4)
+y0 <- bayxshaY[,6]
+y0 <- y0[-c((length(bayxshaY[,6])-1):(length(bayxshaY[,6])))]
+y1 <- y0[-which(is.na(y0))]
+y1 <- scale(y1)
+  
+# genotypes 
+bayxshaG <- read_excel("BayxSha_2_Genotypes.xls", col_names=FALSE, skip=5)
+bayxshaG.id <- bayxshaG[,1]
+bayxshaG <- bayxshaG[,-1]
+bayxshaG[bayxshaG == "A"] <- 2
+bayxshaG[bayxshaG == "C"] <- 1
+bayxshaG[bayxshaG == "B"] <- 0
+bayxshaG[bayxshaG == "D"] <- NA
+bayxshaG <- as.matrix(bayxshaG)
+mode(bayxshaG) <- "numeric"
+bayxshaG <- bayxshaG[-which(is.na(y0)), ]
+```
+
+## Question 1
+What are the dimensions of `y1` and `bayxshaG`?
+```{r, eval=FALSE, echo=FALSE}
+dim(y1)
+dim(bayxshaG)
+```
+
+## Question 2
+How many markers contain missing genotypes (`NA`) ? Use the function `is.na()`. 
+```{r, eval=FALSE, echo=FALSE}
+table(apply(bayxshaG, 2, function(x) any(is.na(x))) )
+```
+
+## Question 3
+Replace missing marker genotypes with mean values in a column-wise fashion (i.e., compute the mean of each column and replace NAs in that column). Then store marker genotypes in a matrix variable `W1`. Show that the variable `W1` does not include any `NA`. 
+```{r, eval=FALSE, echo=FALSE}
+W1 <- matrix(0, ncol=ncol(bayxshaG), nrow=nrow(bayxshaG))
+for (j in 1:ncol(bayxshaG)){
+  #cat("j = ", j, '\n')
+  W1[,j] <- ifelse(is.na(bayxshaG[,j]), mean(bayxshaG[,j], na.rm=TRUE), bayxshaG[,j])
+}
+
+table(apply(W1, 2, function(x) any(is.na(x))) )
+```
+
+## Question 4
+Apply a singular value decomposition (SVD) to the genotype matrix `W1` (i.e.,  $\mathbf{W}_1 = \mathbf{UDV'}$). Show that 1) $\mathbf{U'U}= \mathbf{I}$, 2) $\mathbf{V'V} = \mathbf{I}$, 3) $\mathbf{VV}'= \mathbf{I}$, 4) $\mathbf{V^{-1}} = \mathbf{V'}$, and 5) $\mathbf{V'}^{-1} = \mathbf{V}$. Use the function `svd()`. 
+```{r, eval=FALSE, echo=FALSE}
+svdW1 <- svd(W1)
+u <- svdW1$u
+d <- svdW1$d
+v <- svdW1$v
+
+# 1)
+utu <- t(u) %*% u
+diag(utu)
+utu.off <- utu[lower.tri(utu, diag=FALSE)]
+all.equal(utu.off, rep(0, length(utu.off)))
+
+# 1.x)
+uut <-  u %*% t(u)
+diag(uut)
+uut.off <- uut[lower.tri(uut, diag=FALSE)]
+all.equal(uut.off, rep(0, length(uut.off)))
+
+# 2)
+vtv <- t(v) %*% v
+diag(vtv)
+vtv.off <- vtv[lower.tri(vtv, diag=FALSE)]
+all.equal(vtv.off, rep(0, length(vtv.off)))
+
+# 3)
+vvt <-  v %*% t(v)
+diag(vvt)
+vvt.off <- vvt[lower.tri(vvt, diag=FALSE)]
+all.equal(vvt.off, rep(0, length(vvt.off)))
+
+# 4) 
+all.equal(solve(v), t(v))
+
+# 5) 
+all.equal(solve(t(v)),  v)
+
+
+```
+
+
+## Question 5
+Fit a standard OLS and a principal component-based OLS. Show that the regression of phenotypes on marker covariates is equivalent to the regression of phenotypes on principal components (eigenvectors) computed from marker genotypes. Hint: One way to answer this question is to show that their predicted genetic values are equal.  
+```{r, eval=FALSE, echo=FALSE}
+# beta
+beta.hat <- solve(t(W1)%*%W1) %*% crossprod(W1, y1)
+alpha <- t(u) %*% y1
+#beta.hat.alpha <-  v %*% solve(diag(d)) %*% alpha
+#all.equal(beta.hat, beta.hat.alpha)
+
+# y.hat
+y.hat <- W1 %*% beta.hat 
+y.hat.eigen <-  u %*% alpha
+all.equal(y.hat, y.hat.eigen)
+```
+
+## Question 6
+In general, the ridge regression has a higher predictive ability than OLS because the vector of ridge estimators yields a smaller variance than that of the vector of OLS estimators. Fit a standard ridge regression. Use $\lambda = 5$. Show that the variance of marker effect estimates is smaller in the ridge regression than that of OLS. 
+```{r, eval=FALSE, echo=FALSE}
+lambda1 <- 5
+# Standard-Ridge
+beta.hat.ridge <-  solve(t(W1)%*%W1+ lambda1*diag(ncol(W1))) %*% t(W1) %*% y1
+
+var(beta.hat)
+var(beta.hat.ridge)
+
+var(beta.hat.ridge) < var(beta.hat)
+```
+
+
+## Question 7
+Fit a standard ridge regression and a SVD-based ridge regression. Use $\lambda = 5$. Show that their predicted genetic values are equal. 
+```{r, eval=FALSE, echo=FALSE}
+lambda1 <- 5
+# Standard-Ridge
+y.hat.ridge <- W1 %*% beta.hat.ridge
+
+# SVD-Ridge
+y.hat.ridge.svd <- u %*% diag(d) %*% solve(diag(d)^2 + lambda1*diag(ncol(W1)) ) %*% diag(d) %*% t(u) %*% y1
+
+all.equal(y.hat.ridge, y.hat.ridge.svd)
+```
+
+## Question 8
+Recall that the effect of ridge is to replace $D^{-1}$ in the OLS expression with $(D^2 + \lambda I)^{-1}D$. Show that ridge estimates are shrunk toward zero because these amounts are indeed smaller in the ridge regression than those in OLS. Use $\lambda = 5$.
+```{r, eval=FALSE, echo=FALSE}
+diag(solve(diag(d)^2 + lambda1*diag(ncol(W1)) ) %*% diag(d)  )
+d.ridge <- d / (d^2 + lambda1) 
+d.ols <- 1/d
+table(d.ridge < d.ols)
+```
+
+
+
+# Wheat data
+We will analyze the wheat data from Pérez-Rodríguez et al., (2012). ([doi:10.1534/g3.112.003665 ](http://www.g3journal.org/content/2/12/1595)). Download the supporting data [File S1](http://www.g3journal.org/content/2/12/1595.supplemental). The R object `YLD_1.RData` includes 306 elite wheat lines genotyped with 1,717 diversity array technology (DArT) markers. Note that the [DArT marker](https://en.wikipedia.org/wiki/Diversity_Arrays_Technology) is coded either 0 or 1 indicating the presence or absence of allele at a given locus. The marker information is in the `Marker` variable.
+```{r, eval=FALSE}
+rm(list=ls())
+load("data_G3/YLD/YLD_1.RData")
+W2 <- Markers
+dim(W2)
+```
+
+## Question 9
+Recall that ridge estimates can be expressed as $\hat{\beta}^{ridge}_j = \frac{\sum^n_{i=1} x^2_{ij} }{\sum^n_{i=1} x^2_{ij} + \lambda}  \times \hat{\beta}^{ols}_{j}$. Create a centered genotype matrix `W2c`. Calculate the minor allele frequencies (MAF) and the amounts of shrinkage for all markers. Plot MAF on the X axis and the amounts of shrinkage on the Y axis. Interpret the figure you obtained. Use $\lambda = 100$. 
+```{r, eval=FALSE, echo=FALSE}
+W2c <- scale(W2, center=TRUE, scale=FALSE)
+lambda2 <- 100
+s <- array()
+for (j in 1:ncol(W2c)){
+  s[j] <- sum(W2c[,j]^2) / (sum(W2c[,j]^2) + diag(lambda2,1)) 
+}
+
+p <- colMeans(W2) 
+maf <- ifelse(p > 0.5, 1-p, p) # or pmin(p, 1-p)
+
+par(mar=c(4,4,1,1))
+plot(maf, s, xlab="MAF", ylab="Shrinkage")
+
+which.min(s)
+s[which.min(s)]
+
+which.min(maf)
+maf[which.min(maf)]
+```
+
+
+# Mouse data
+We will analyze the mouse data from Valdar et al., (2006) ([doi:10.1038/ng1840 ](http://www.nature.com/ng/journal/v38/n8/abs/ng1840.html)). This dataset is available in the [BGLR](https://cran.r-project.org/web/packages/BGLR/index.html) R package. The `mice.X` variable contains 1,814 individuals and 10,346 SNPs. 
+```{r, eval=FALSE}
+library(BGLR)
+data(mice)
+?mice
+W3 <- mice.X 
+dim(W3)
+```
+
+## Question 10
+Calculate MAF and the amounts of shrinkage for all markers. Create a centered genotype matrix `W3c`. Plot MAF on the X axis and the amounts of shrinkage on the Y axis. Interpret the figure you obtained. Does the pattern you observe here agree with the wheat dataset from Question 9? If not, explain why. Use $\lambda = 100$. 
+```{r, eval=FALSE, echo=FALSE}
+W3c <- scale(W3, center=TRUE, scale=FALSE)
+lambda2 <- 100
+s <- array()
+for (j in 1:ncol(W3c)){
+  s[j] <- sum(W3c[,j]^2) / (sum(W3c[,j]^2) + diag(lambda2,1)) 
+}
+
+p <- colSums(W3) / (2*nrow(W3))
+maf <- ifelse(p > 0.5, 1-p, p)
+
+par(mar=c(4,4,1,1))
+plot(maf, s, xlab="MAF", ylab="Shrinkage")
+
+which.min(s)
+s[which.min(s)]
+
+which.min(maf)
+maf[which.min(maf)]
+```
+
+
+
+# Maize data
+Download the maize data *File S1* from Crossa et al., (2010) available at [10.1534/genetics.110.118521](http://dx.doi.org/10.1534/genetics.110.118521). The `dataCorn_SS.RData` contains 264 corn yield phenotypes evaluated under severe drought stress conditions. The variable `X` includes 1,135 SNP markers. 
+```{r, eval=FALSE}
+rm(list=ls())
+load("analysis_wheat_corn/corn_yield/data/dataCorn_SS.RData")
+W4 <- X
+dim(W4)
+```
+
+## Question 11
+Calculate MAF and the amounts of shrinkage for all markers. Create a centered genotype matrix `W4c`.  Plot MAF on the X axis and the amounts of shrinkage on the Y axis. Interpret the figure you obtained. Does the pattern you observe agree with the wheat dataset from Question 9? If not, explain why. Use $\lambda = 100$. 
+
+```{r, eval=FALSE, echo=FALSE}
+W4c <- scale(W4, center=TRUE, scale=FALSE)
+lambda2 <- 100
+s <- array()
+for (j in 1:ncol(W4c)){
+  s[j] <- sum(W4c[,j]^2) / (sum(W4c[,j]^2) + diag(lambda2,1)) 
+}
+
+p <- colSums(W4 + 1) / (2*nrow(W4))
+maf <- ifelse(p > 0.5, 1-p, p)
+
+par(mar=c(4,4,1,1))
+plot(maf, s, xlab="MAF", ylab="Shrinkage")
+
+which.min(s)
+s[which.min(s)]
+
+which.min(maf)
+maf[which.min(maf)]
+
+table(W4[,1014])
+maf[1014]
+s[1014]
+
+table(W4[,331])
+maf[331]
+s[331]
+
+```
+
+## Question 12
+Continue analyzing the maize dataset. The vector of phenotypes is included in the `y` variable. Recall that the dimension of predictors is 264 by 1,135. Show that we cannot fit OLS using the `solve()` function when $n < m$ but the ridge regression can circumvent this problem. Create a scatter plot of observed `y` vs. predicted `y`. Use the variables `y` and `W4`. Set $\lambda = 100$.
+```{r, eval=FALSE, echo=FALSE}
+y <- scale(y)
+try( y.hat.ols <- W4 %*% solve(t(W4)%*%W4) %*% t(W4) %*% y )
+
+lambda <- 100
+y.hat.ridge <-W4 %*% solve(t(W4)%*%W4+ lambda*diag(ncol(W4))) %*% t(W4) %*% y
+cor(y, y.hat.ridge)
+plot(y, y.hat.ridge)
+```

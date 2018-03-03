@@ -35,9 +35,8 @@ Download the [phenotypic](http://publiclines.versailles.inra.fr/ijpbinfo/publicl
 ```{r, warning=FALSE, eval=FALSE}
 library(readxl)
 # phenotypes 
-bayxshaY <- read_excel("BayxSha_PublishedPheno.xls", col_names=FALSE, sheet=1, skip=4)
-y0 <- bayxshaY[,6]
-y0 <- y0[-c((length(bayxshaY[,6])-1):(length(bayxshaY[,6])))]
+bayxshaY <- (read_excel("BayxSha_PublishedPheno.xls", col_names=FALSE, sheet=1, skip=4))
+y0 <- as.numeric(unlist(bayxshaY[,6]))
 y1 <- y0[-which(is.na(y0))]
 y1 <- scale(y1)
   

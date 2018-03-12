@@ -26,7 +26,7 @@ opts_knit$set(width=75)
 ```
 
 ### Due date
-Thursday, March 13, 5pm
+Tuesday, March 13, 5pm
 
 # Arabidopsis data
 We will analyze Arabidopsis recombinant inbred lines available at the [Bay-0 x Shahdara](http://publiclines.versailles.inra.fr/page/33) project. 

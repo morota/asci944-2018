@@ -147,7 +147,7 @@ colnames(Wd1)[which.min(d1)]
 
 
 ## Question 6
-Repeat Question 5 by defining $\mathbf{W}_{d}$ as the dominant marker genotype matrix defined in Vitezica et al. (2013). 
+Repeat Question 5 by defining $\mathbf{W}_{d}$ as the dominant marker genotype matrix proposed in Vitezica et al. (2013). 
 ```{r, eval=FALSE, echo=FALSE}
 y <- mice.pheno$Obesity.BMI
 W <- mice.X

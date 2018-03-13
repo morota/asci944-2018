@@ -1,0 +1,189 @@
+---
+title: "ASCI 944 / STAT 844 Quantitative Methods for Genomics of Complex Traits"
+subtitle: "Homework assignment 4"
+author: "Gota Morota"
+date: "March 13, 2018"
+output:
+  rmdformats::readthedown:
+    highlight: kate
+    self_contained: false
+---
+
+```{r knitr_init, echo=FALSE, cache=FALSE}
+library(knitr)
+library(rmdformats)
+
+## Global options
+options(max.print="75")
+opts_chunk$set(echo=TRUE,
+	             cache=TRUE,
+               prompt=FALSE,
+               tidy=TRUE,
+               comment=NA,
+               message=FALSE,
+               warning=FALSE)
+opts_knit$set(width=75)
+```
+
+### Due date
+Tuesday, April 3, 5pm
+
+## Mice data
+Load mouse SNP data available in the [BGLR](https://cran.r-project.org/web/packages/BGLR/index.html) R package. 
+```{r, eval=FALSE}
+library(BGLR)
+data(mice)
+?mice
+?mice.X
+?mice.pheno
+```
+
+
+## Question 1
+Compute the first genomic relationship matrix ($\mathbf{G}_1$) of VanRaden (2008) ([doi](http://dx.doi.org/10.3168/jds.2007-0980)) using the entire markers and all individuals. Report the median of the lower triangular part of $\mathbf{G}_1$ matrix.
+```{r,  eval=FALSE, echo=FALSE}
+freq <- colSums(mice.X) / (2*nrow(mice.X))
+Xc <- scale(mice.X, center = TRUE, scale = FALSE)
+varX <- 2 * sum(freq*(1-freq))
+G1 <- tcrossprod(Xc) / varX
+
+median(G1[lower.tri(G1, diag = TRUE)])
+```
+
+## Question 2
+Compute the second genomic relationship matrix ($\mathbf{G}_2$) of VanRaden (2008) using the entire markers and all individuals.  Report the median of the lower triangular part of $\mathbf{G}_2$ matrix. What is the correlation between lower triangular parts of $\mathbf{G}_1$  and $\mathbf{G}_2$ matrices?
+```{r, eval=FALSE, echo=FALSE}
+Xs <- scale(mice.X, center = TRUE, scale = TRUE)
+G2 <- tcrossprod(Xs) / ncol(Xs)
+
+median(G2[lower.tri(G2, diag = TRUE)])
+
+cor(G1[lower.tri(G1, diag = TRUE)], G2[lower.tri(G2, diag = TRUE)])
+```
+
+## Question 3
+Compute the dominant genomic relationship matrix ($\mathbf{D}_1$) of Su et al. (2012) ([doi](http://dx.doi.org/10.1371/journal.pone.0045293)) using the entire markers and all individuals. Report the median of the lower triangular part of $\mathbf{D}_1$ matrix.
+```{r, eval=FALSE, echo=FALSE}
+freq <- colSums(mice.X) / (2*nrow(mice.X))
+Wd1 <- mice.X
+Wd1[Wd1 == 2]  <-  0
+Wc <- matrix(NA, ncol=ncol(Wd1), nrow=nrow(Wd1))
+for (k in 1:ncol(mice.X)){
+  Wc[,k] <- Wd1[,k] - 2*freq[k]*(1-freq[k])
+}
+varWc <-  sum(2*freq*(1-freq)*(1 - 2*freq*(1-freq)) )
+D1 <- tcrossprod(Wc) / varWc
+
+median(D1[lower.tri(D1, diag=TRUE)])
+
+```
+
+## Question 4
+Compute the dominant genomic relationship matrix ($\mathbf{D}_2$) of Vitezica et al. (2013) ([doi](http://dx.doi.org/10.1534/genetics.113.155176)) using the entire markers and all individuals. Report the median of the lower triangular part of $\mathbf{D}_2$ matrix. What is the correlation between lower triangular parts of $\mathbf{D}_1$ and  $\mathbf{D}_2$ matrices?
+```{r, eval=FALSE, echo=FALSE}
+freq <- colSums(mice.X) / (2*nrow(mice.X))
+Wd2 <- mice.X
+for (k in 1:ncol(Wd2)){
+  index2 <- which(Wd2[,k] ==2)
+  Wd2[,k][index2] <- -2*(1 - freq[k])^2
+  index1 <- which(Wd2[,k] ==1)
+  Wd2[,k][index1] <- 2*freq[k]*(1 - freq[k])
+  index0 <- which(Wd2[,k] ==0)
+  Wd2[,k][index0] <- -2*freq[k]^2
+}
+varW <-  sum( (2*freq*(1-freq))^2 )
+D2 <- tcrossprod(Wd2) / varW
+
+median(D2[lower.tri(D2, diag = TRUE)])
+
+cor(D1[lower.tri(D1, diag = TRUE)], D2[lower.tri(D2, diag = TRUE)])
+```
+
+
+## Question 5
+Perform a single marker OLS-based GWA analysis by fitting $y = \mathbf{X}\beta + \mathbf{W}_{ac} a + \mathbf{W}_d d + e$, 
+where $y$ is the BMI phenotype, $\mathbf{X}$ includes systematic effects of intercept, sex, litter size, and cage density, $\mathbf{W}_{ac}$ is the centered additive marker genotype matrix, $\mathbf{W}_{d}$ is the dominant marker genotype matrix defined in Su et al. (2012), $a$ is the additive marker effect, and $d$ is the dominant marker effect. Report 1) SNP ID that has the smallest p-value for the additive marker effect and 2) SNP ID that has the smallest p-value for the dominant marker effect. If additive and dominant marker effects are not simultaneously estimable, set $p$-values equal to `NA`. Ignore multiple testing corrections for simplicity. Use the `lm()` function. 
+
+```{r, eval=FALSE, echo=FALSE}
+y <- mice.pheno$Obesity.BMI
+W <- mice.X
+W <- scale(W, center=TRUE, scale=FALSE)
+X1 <- model.matrix(~factor(mice.pheno[,"GENDER"]))
+X2 <- as.matrix(mice.pheno[, c("CageDensity", "Litter")])
+X <- cbind(X1, X2)
+XWWd <- cbind(X, W, Wd1)
+m <- ncol(W)
+
+a1 <- array()
+d1 <- array()
+
+for (i in 1:m){
+  cat("Fitting", i, "th SNP", '\n')
+  Z <- XWWd[,c(1:4, 4+i, 4+i+m)]
+  fit <- lm(y ~ -1 + Z)
+  
+  #S <- lambda * diag(6)
+  #S[c(1,2,3,4),c(1,2,3,4)] <- 0
+  #beta <- solve(t(Z) %*% Z + S) %*% t(Z) %*% y
+  
+  if (nrow(summary(fit)$coef) == ncol(Z)){
+    a1[i] <- summary(fit)$coef[5,4]
+    d1[i] <- summary(fit)$coef[6,4]
+  } else{
+    a1[i] <- NA
+    d1[i] <- NA
+  }
+}
+which.min(a1)
+colnames(W)[which.min(a1)]
+a[which.min(a1)]
+
+which.min(d1)
+d[which.min(d1)]
+colnames(Wd1)[which.min(d1)]
+
+```
+
+
+
+## Question 6
+Repeat Question 5 by defining $\mathbf{W}_{d}$ as the dominant marker genotype matrix defined in Vitezica et al. (2013). 
+```{r, eval=FALSE, echo=FALSE}
+y <- mice.pheno$Obesity.BMI
+W <- mice.X
+W <- scale(W, center=TRUE, scale=FALSE)
+X1 <- model.matrix(~factor(mice.pheno[,"GENDER"]))
+X2 <- as.matrix(mice.pheno[, c("CageDensity", "Litter")])
+X <- cbind(X1, X2)
+XWWd <- cbind(X, W, Wd2)
+m <- ncol(W)
+
+a2 <- array()
+d2 <- array()
+
+for (i in 1:m){
+  cat("Fitting", i, "th SNP", '\n')
+  Z <- XWWd[,c(1:4, 4+i, 4+i+m)]
+  fit <- lm(y ~ -1 + Z)
+  
+  #S <- lambda * diag(6)
+  #S[c(1,2,3,4),c(1,2,3,4)] <- 0
+  #beta <- solve(t(Z) %*% Z + S) %*% t(Z) %*% y
+  
+  if (nrow(summary(fit)$coef) == ncol(Z)){
+    a2[i] <- summary(fit)$coef[5,4]
+    d2[i] <- summary(fit)$coef[6,4]
+  } else{
+    a2[i] <- NA
+    d2[i] <- NA
+  }
+}
+which.min(a2)
+colnames(W)[which.min(a2)]
+a2[which.min(a2)]
+
+which.min(d2)
+d[which.min(d2)]
+colnames(Wd2)[which.min(d2)]
+
+```

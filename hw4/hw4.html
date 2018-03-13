@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<meta charset="utf-8">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="pandoc" />
+
+<meta name="author" content="Gota Morota" />
+
+<meta name="date" content="2018-03-13" />
+
+<title>ASCI 944 / STAT 844 Quantitative Methods for Genomics of Complex Traits</title>
+
+<script src="hw4_files/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="hw4_files/bootstrap-3.3.6/css/bootstrap.min.css" rel="stylesheet" />
+<script src="hw4_files/bootstrap-3.3.6/js/bootstrap.min.js"></script>
+<script src="hw4_files/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<script src="hw4_files/navigation-1.1/tabsets.js"></script>
+<script src="hw4_files/navigation-1.1/codefolding.js"></script>
+<link href="hw4_files/magnific-popup-1.1.0/magnific-popup.css" rel="stylesheet" />
+<script src="hw4_files/magnific-popup-1.1.0/jquery.magnific-popup.min.js"></script>
+<link href="hw4_files/readthedown-0.1/readthedown.css" rel="stylesheet" />
+<script src="hw4_files/readthedown-0.1/readthedown.js"></script>
+
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+div.sourceCode { overflow-x: auto; }
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; background-color: #ffffff; color: #1f1c1b; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; background-color: #ffffff; color: #a0a0a0; border-right: 1px solid #a0a0a0; }
+td.sourceCode { padding-left: 5px; }
+pre, code { color: #1f1c1b; background-color: #ffffff; }
+code > span.kw { color: #1f1c1b; font-weight: bold; } /* Keyword */
+code > span.dt { color: #0057ae; } /* DataType */
+code > span.dv { color: #b08000; } /* DecVal */
+code > span.bn { color: #b08000; } /* BaseN */
+code > span.fl { color: #b08000; } /* Float */
+code > span.cn { color: #aa5500; } /* Constant */
+code > span.ch { color: #924c9d; } /* Char */
+code > span.sc { color: #3daee9; } /* SpecialChar */
+code > span.st { color: #bf0303; } /* String */
+code > span.vs { color: #bf0303; } /* VerbatimString */
+code > span.ss { color: #ff5500; } /* SpecialString */
+code > span.im { color: #ff5500; } /* Import */
+code > span.co { color: #898887; } /* Comment */
+code > span.do { color: #607880; } /* Documentation */
+code > span.an { color: #ca60ca; } /* Annotation */
+code > span.cv { color: #0095ff; } /* CommentVar */
+code > span.ot { color: #006e28; } /* Other */
+code > span.fu { color: #644a9b; } /* Function */
+code > span.va { color: #0057ae; } /* Variable */
+code > span.cf { color: #1f1c1b; font-weight: bold; } /* ControlFlow */
+code > span.op { color: #1f1c1b; } /* Operator */
+code > span.bu { color: #644a9b; font-weight: bold; } /* BuiltIn */
+code > span.ex { color: #0095ff; font-weight: bold; } /* Extension */
+code > span.pp { color: #006e28; } /* Preprocessor */
+code > span.at { color: #0057ae; } /* Attribute */
+code > span.re { color: #0057ae; } /* RegionMarker */
+code > span.in { color: #b08000; } /* Information */
+code > span.wa { color: #bf0303; } /* Warning */
+code > span.al { color: #bf0303; font-weight: bold; } /* Alert */
+code > span.er { color: #bf0303; text-decoration: underline; } /* Error */
+code > span. { color: #1f1c1b; } /* Normal */
+</style>
+
+
+</head>
+
+<body>
+
+
+<div id="content" data-toggle="wy-nav-shift">
+
+<!-- tabsets -->
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+</script>
+
+<!-- code folding -->
+
+<nav id="nav-top" role="navigation" aria-label="top navigation">
+    <a role="button" href="#" data-toggle="wy-nav-top"><span class="glyphicon glyphicon-menu-hamburger"></span></a>
+</nav>
+
+
+<div id="header">
+<h1 class="title">ASCI 944 / STAT 844 Quantitative Methods for Genomics of Complex Traits</h1>
+<h1 class="subtitle">Homework assignment 4</h1>
+</div>
+
+
+<div id="table-of-contents">
+    <h2><a href="#content">ASCI 944 / STAT 844 Quantitative Methods for Genomics of Complex Traits</a></h2>
+    <div id="text-table-of-contents">
+      <ul>
+      <li><a href="#mice-data">Mice data</a></li>
+      <li><a href="#question-1">Question 1</a></li>
+      <li><a href="#question-2">Question 2</a></li>
+      <li><a href="#question-3">Question 3</a></li>
+      <li><a href="#question-4">Question 4</a></li>
+      <li><a href="#question-5">Question 5</a></li>
+      <li><a href="#question-6">Question 6</a></li>
+      </ul>
+    </div>
+</div>
+
+<div id="main">
+<div id="due-date" class="section level3">
+<h3>Due date</h3>
+<p>Tuesday, April 3, 5pm</p>
+</div>
+<div id="mice-data" class="section level2">
+<h2>Mice data</h2>
+<p>Load mouse SNP data available in the <a href="https://cran.r-project.org/web/packages/BGLR/index.html">BGLR</a> R package.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(BGLR)
+<span class="kw">data</span>(mice)
+<span class="st">`</span><span class="dt">?</span><span class="st">`</span>(mice)
+<span class="st">`</span><span class="dt">?</span><span class="st">`</span>(mice.X)
+<span class="st">`</span><span class="dt">?</span><span class="st">`</span>(mice.pheno)</code></pre></div>
+</div>
+<div id="question-1" class="section level2">
+<h2>Question 1</h2>
+<p>Compute the first genomic relationship matrix (<span class="math inline">\(\mathbf{G}_1\)</span>) of VanRaden (2008) (<a href="http://dx.doi.org/10.3168/jds.2007-0980">doi</a>) using the entire markers and all individuals. Report the median of the lower triangular part of <span class="math inline">\(\mathbf{G}_1\)</span> matrix.</p>
+</div>
+<div id="question-2" class="section level2">
+<h2>Question 2</h2>
+<p>Compute the second genomic relationship matrix (<span class="math inline">\(\mathbf{G}_2\)</span>) of VanRaden (2008) using the entire markers and all individuals. Report the median of the lower triangular part of <span class="math inline">\(\mathbf{G}_2\)</span> matrix. What is the correlation between lower triangular parts of <span class="math inline">\(\mathbf{G}_1\)</span> and <span class="math inline">\(\mathbf{G}_2\)</span> matrices?</p>
+</div>
+<div id="question-3" class="section level2">
+<h2>Question 3</h2>
+<p>Compute the dominant genomic relationship matrix (<span class="math inline">\(\mathbf{D}_1\)</span>) of Su et al. (2012) (<a href="http://dx.doi.org/10.1371/journal.pone.0045293">doi</a>) using the entire markers and all individuals. Report the median of the lower triangular part of <span class="math inline">\(\mathbf{D}_1\)</span> matrix.</p>
+</div>
+<div id="question-4" class="section level2">
+<h2>Question 4</h2>
+<p>Compute the dominant genomic relationship matrix (<span class="math inline">\(\mathbf{D}_2\)</span>) of Vitezica et al. (2013) (<a href="http://dx.doi.org/10.1534/genetics.113.155176">doi</a>) using the entire markers and all individuals. Report the median of the lower triangular part of <span class="math inline">\(\mathbf{D}_2\)</span> matrix. What is the correlation between lower triangular parts of <span class="math inline">\(\mathbf{D}_1\)</span> and <span class="math inline">\(\mathbf{D}_2\)</span> matrices?</p>
+</div>
+<div id="question-5" class="section level2">
+<h2>Question 5</h2>
+<p>Perform a single marker OLS-based GWA analysis by fitting <span class="math inline">\(y = \mathbf{X}\beta + \mathbf{W}_{ac} a + \mathbf{W}_d d + e\)</span>, where <span class="math inline">\(y\)</span> is the BMI phenotype, <span class="math inline">\(\mathbf{X}\)</span> includes systematic effects of intercept, sex, litter size, and cage density, <span class="math inline">\(\mathbf{W}_{ac}\)</span> is the centered additive marker genotype matrix, <span class="math inline">\(\mathbf{W}_{d}\)</span> is the dominant marker genotype matrix defined in Su et al. (2012), <span class="math inline">\(a\)</span> is the additive marker effect, and <span class="math inline">\(d\)</span> is the dominant marker effect. Report 1) SNP ID that has the smallest p-value for the additive marker effect and 2) SNP ID that has the smallest p-value for the dominant marker effect. If additive and dominant marker effects are not simultaneously estimable, set <span class="math inline">\(p\)</span>-values equal to <code>NA</code>. Ignore multiple testing corrections for simplicity. Use the <code>lm()</code> function.</p>
+</div>
+<div id="question-6" class="section level2">
+<h2>Question 6</h2>
+<p>Repeat Question 5 by defining <span class="math inline">\(\mathbf{W}_{d}\)</span> as the dominant marker genotype matrix defined in Vitezica et al. (2013).</p>
+</div>
+</div>
+
+
+</div>
+
+<div id="postamble" data-toggle="wy-nav-shift" class="status">
+<p class="author"><span class="glyphicon glyphicon-user"></span> Gota Morota</p>
+<p class="date"><span class="glyphicon glyphicon-calendar"></span> March 13, 2018</p>
+</div>
+
+
+<script>
+$(document).ready(function () {
+ 	  });
+</script>
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<meta charset="utf-8">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="pandoc" />
+
+<meta name="author" content="Gota Morota" />
+
+<meta name="date" content="2018-03-15" />
+
+<title>GBLUP and RR-BLUP</title>
+
+<script src="day20_files/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="day20_files/bootstrap-3.3.6/css/bootstrap.min.css" rel="stylesheet" />
+<script src="day20_files/bootstrap-3.3.6/js/bootstrap.min.js"></script>
+<script src="day20_files/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<script src="day20_files/navigation-1.1/tabsets.js"></script>
+<script src="day20_files/navigation-1.1/codefolding.js"></script>
+<link href="day20_files/magnific-popup-1.1.0/magnific-popup.css" rel="stylesheet" />
+<script src="day20_files/magnific-popup-1.1.0/jquery.magnific-popup.min.js"></script>
+<link href="day20_files/readthedown-0.1/readthedown.css" rel="stylesheet" />
+<script src="day20_files/readthedown-0.1/readthedown.js"></script>
+
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+div.sourceCode { overflow-x: auto; }
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; background-color: #ffffff; color: #1f1c1b; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; background-color: #ffffff; color: #a0a0a0; border-right: 1px solid #a0a0a0; }
+td.sourceCode { padding-left: 5px; }
+pre, code { color: #1f1c1b; background-color: #ffffff; }
+code > span.kw { color: #1f1c1b; font-weight: bold; } /* Keyword */
+code > span.dt { color: #0057ae; } /* DataType */
+code > span.dv { color: #b08000; } /* DecVal */
+code > span.bn { color: #b08000; } /* BaseN */
+code > span.fl { color: #b08000; } /* Float */
+code > span.cn { color: #aa5500; } /* Constant */
+code > span.ch { color: #924c9d; } /* Char */
+code > span.sc { color: #3daee9; } /* SpecialChar */
+code > span.st { color: #bf0303; } /* String */
+code > span.vs { color: #bf0303; } /* VerbatimString */
+code > span.ss { color: #ff5500; } /* SpecialString */
+code > span.im { color: #ff5500; } /* Import */
+code > span.co { color: #898887; } /* Comment */
+code > span.do { color: #607880; } /* Documentation */
+code > span.an { color: #ca60ca; } /* Annotation */
+code > span.cv { color: #0095ff; } /* CommentVar */
+code > span.ot { color: #006e28; } /* Other */
+code > span.fu { color: #644a9b; } /* Function */
+code > span.va { color: #0057ae; } /* Variable */
+code > span.cf { color: #1f1c1b; font-weight: bold; } /* ControlFlow */
+code > span.op { color: #1f1c1b; } /* Operator */
+code > span.bu { color: #644a9b; font-weight: bold; } /* BuiltIn */
+code > span.ex { color: #0095ff; font-weight: bold; } /* Extension */
+code > span.pp { color: #006e28; } /* Preprocessor */
+code > span.at { color: #0057ae; } /* Attribute */
+code > span.re { color: #0057ae; } /* RegionMarker */
+code > span.in { color: #b08000; } /* Information */
+code > span.wa { color: #bf0303; } /* Warning */
+code > span.al { color: #bf0303; font-weight: bold; } /* Alert */
+code > span.er { color: #bf0303; text-decoration: underline; } /* Error */
+code > span. { color: #1f1c1b; } /* Normal */
+</style>
+
+
+</head>
+
+<body>
+
+
+<div id="content" data-toggle="wy-nav-shift">
+
+<!-- tabsets -->
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+</script>
+
+<!-- code folding -->
+
+<nav id="nav-top" role="navigation" aria-label="top navigation">
+    <a role="button" href="#" data-toggle="wy-nav-top"><span class="glyphicon glyphicon-menu-hamburger"></span></a>
+</nav>
+
+
+<div id="header">
+<h1 class="title">GBLUP and RR-BLUP</h1>
+</div>
+
+
+<div id="table-of-contents">
+    <h2><a href="#content">GBLUP and RR-BLUP</a></h2>
+    <div id="text-table-of-contents">
+      <ul>
+      <li><a href="#rice-data">Rice data</a></li>
+      <li><a href="#read-genomic-data">Read genomic data</a></li>
+      <li><a href="#genotype-imputation">Genotype imputation</a></li>
+      <li><a href="#read-.fam-file-accession-ids">Read .fam file (accession IDs)</a></li>
+      <li><a href="#read-phenotype-file">Read phenotype file</a></li>
+      <li><a href="#gblup">GBLUP</a></li>
+      <li><a href="#rr-blup">RR-BLUP</a></li>
+      </ul>
+    </div>
+</div>
+
+<div id="main">
+<div id="rice-data" class="section level2">
+<h2>Rice data</h2>
+<p>Download rice data from <a href="http://ricediversity.org/data/sets/44kgwas/">here</a>.</p>
+</div>
+<div id="read-genomic-data" class="section level2">
+<h2>Read genomic data</h2>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(BGLR)
+out &lt;-<span class="st"> </span><span class="kw">read_ped</span>(<span class="st">&quot;../../../2016/ASCI896/day16/RiceDiversity_44K_Genotypes_PLINK/sativas413.ped&quot;</span>)
+p =<span class="st"> </span>out<span class="op">$</span>p
+n =<span class="st"> </span>out<span class="op">$</span>n
+out =<span class="st"> </span>out<span class="op">$</span>x
+<span class="co"># Recode snp to 0,1,2 format using allele 1 0 --&gt; 0 1 --&gt; 1 2 --&gt; NA 3 --&gt; 2</span>
+out[out <span class="op">==</span><span class="st"> </span><span class="dv">2</span>] =<span class="st"> </span><span class="ot">NA</span>
+out[out <span class="op">==</span><span class="st"> </span><span class="dv">3</span>] =<span class="st"> </span><span class="dv">2</span>
+W =<span class="st"> </span><span class="kw">matrix</span>(out, <span class="dt">nrow =</span> p, <span class="dt">ncol =</span> n, <span class="dt">byrow =</span> <span class="ot">TRUE</span>)
+W =<span class="st"> </span><span class="kw">t</span>(W)</code></pre></div>
+</div>
+<div id="genotype-imputation" class="section level2">
+<h2>Genotype imputation</h2>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="cf">for</span> (j <span class="cf">in</span> <span class="dv">1</span><span class="op">:</span><span class="kw">ncol</span>(W)) {
+    W[, j] &lt;-<span class="st"> </span><span class="kw">ifelse</span>(<span class="kw">is.na</span>(W[, j]), <span class="kw">mean</span>(W[, j], <span class="dt">na.rm =</span> <span class="ot">TRUE</span>), W[, j])
+}</code></pre></div>
+</div>
+<div id="read-.fam-file-accession-ids" class="section level2">
+<h2>Read .fam file (accession IDs)</h2>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">fam &lt;-<span class="st"> </span><span class="kw">read.table</span>(<span class="st">&quot;../../../2016/ASCI896/day16/RiceDiversity_44K_Genotypes_PLINK/sativas413.fam&quot;</span>, 
+    <span class="dt">header =</span> <span class="ot">FALSE</span>, <span class="dt">stringsAsFactors =</span> <span class="ot">FALSE</span>)
+<span class="kw">head</span>(fam)
+<span class="kw">rownames</span>(W) &lt;-<span class="st"> </span>fam<span class="op">$</span>V2  <span class="co"># 413 x 36901</span></code></pre></div>
+</div>
+<div id="read-phenotype-file" class="section level2">
+<h2>Read phenotype file</h2>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># phenotypes</span>
+rice.pheno &lt;-<span class="st"> </span><span class="kw">read.table</span>(<span class="st">&quot;https://ricediversity.org/data/sets/44kgwas/RiceDiversity_44K_Phenotypes_34traits_PLINK.txt&quot;</span>, 
+    <span class="dt">header =</span> <span class="ot">TRUE</span>, <span class="dt">stringsAsFactors =</span> <span class="ot">FALSE</span>, <span class="dt">sep =</span> <span class="st">&quot;</span><span class="ch">\t</span><span class="st">&quot;</span>)
+<span class="kw">table</span>(<span class="kw">rownames</span>(W) <span class="op">==</span><span class="st"> </span>rice.pheno<span class="op">$</span>NSFTVID)
+y &lt;-<span class="st"> </span>rice.pheno<span class="op">$</span>Flowering.time.at.Arkansas  <span class="co"># # use the first trait </span>
+index &lt;-<span class="st"> </span><span class="op">!</span><span class="kw">is.na</span>(y)
+y &lt;-<span class="st"> </span>y[index]  <span class="co"># 374</span>
+W &lt;-<span class="st"> </span>W[index, ]  <span class="co"># 374x36901</span></code></pre></div>
+</div>
+<div id="gblup" class="section level2">
+<h2>GBLUP</h2>
+<div id="regress-package" class="section level3">
+<h3><a href="https://cran.r-project.org/web/packages/regress/index.html">regress</a> package</h3>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(regress)
+p &lt;-<span class="st"> </span><span class="kw">colSums</span>(W)<span class="op">/</span>(<span class="dv">2</span> <span class="op">*</span><span class="st"> </span><span class="kw">nrow</span>(W))
+maf &lt;-<span class="st"> </span><span class="kw">ifelse</span>(p <span class="op">&gt;</span><span class="st"> </span><span class="fl">0.5</span>, <span class="dv">1</span> <span class="op">-</span><span class="st"> </span>p, p)  <span class="co"># or pmin(p, 1-p)</span>
+maf.index &lt;-<span class="st"> </span><span class="kw">which</span>(maf <span class="op">&lt;</span><span class="st"> </span><span class="fl">0.05</span>)
+W2 &lt;-<span class="st"> </span>W[, <span class="op">-</span>maf.index]
+<span class="kw">dim</span>(W2)
+Wcs &lt;-<span class="st"> </span><span class="kw">scale</span>(W2, <span class="dt">center =</span> <span class="ot">TRUE</span>, <span class="dt">scale =</span> <span class="ot">TRUE</span>)
+G &lt;-<span class="st"> </span><span class="kw">tcrossprod</span>(Wcs)<span class="op">/</span><span class="kw">ncol</span>(Wcs)
+
+varcompG &lt;-<span class="st"> </span><span class="kw">regress</span>(y <span class="op">~</span><span class="st"> </span><span class="dv">1</span>, <span class="op">~</span>G)
+<span class="kw">names</span>(varcompG)
+
+<span class="co"># intercept, additive genomic variance, residual variance</span>
+varcompG
+
+<span class="co"># genetic values (breeding values)</span>
+GBLUP &lt;-<span class="st"> </span><span class="kw">BLUP</span>(varcompG)
+<span class="kw">head</span>(GBLUP<span class="op">$</span>Mean)
+<span class="kw">tail</span>(GBLUP<span class="op">$</span>Mean)</code></pre></div>
+</div>
+<div id="rrblup-package" class="section level3">
+<h3><a href="https://cran.r-project.org/web/packages/rrBLUP/index.html">rrBLUP</a> package</h3>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(rrBLUP)
+GBLUP2 &lt;-<span class="st"> </span><span class="kw">mixed.solve</span>(<span class="dt">y =</span> y, <span class="dt">K =</span> G)
+<span class="kw">names</span>(GBLUP2)
+
+<span class="co"># intercept</span>
+GBLUP2<span class="op">$</span>beta
+<span class="co"># additive genomic variance</span>
+GBLUP2<span class="op">$</span>Vu
+<span class="co"># residual variance</span>
+GBLUP2<span class="op">$</span>Ve
+
+<span class="co"># genetic values (breeding values)</span>
+<span class="kw">head</span>(GBLUP2<span class="op">$</span>u)
+<span class="kw">tail</span>(GBLUP2<span class="op">$</span>u)</code></pre></div>
+</div>
+</div>
+<div id="rr-blup" class="section level2">
+<h2>RR-BLUP</h2>
+<div id="regress-package-1" class="section level3">
+<h3><a href="https://cran.r-project.org/web/packages/regress/index.html">regress</a> package</h3>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">Wc &lt;-<span class="st"> </span><span class="kw">scale</span>(W2, <span class="dt">center =</span> <span class="ot">TRUE</span>, <span class="dt">scale =</span> <span class="ot">FALSE</span>)
+varcompW &lt;-<span class="st"> </span><span class="kw">regress</span>(y <span class="op">~</span><span class="st"> </span><span class="dv">1</span>, <span class="op">~</span>Wc)
+
+
+WWt &lt;-<span class="st"> </span><span class="kw">tcrossprod</span>(Wc)
+varcompW &lt;-<span class="st"> </span><span class="kw">regress</span>(y <span class="op">~</span><span class="st"> </span><span class="dv">1</span>, <span class="op">~</span>WWt)
+
+<span class="kw">names</span>(varcompW)
+
+<span class="co"># intercept, additive marker variance, residual variance</span>
+varcompW
+
+<span class="co"># genetic values (breeding values)</span>
+RRBLUP &lt;-<span class="st"> </span><span class="kw">BLUP</span>(varcompW)
+<span class="kw">head</span>(RRBLUP<span class="op">$</span>Mean)
+<span class="kw">tail</span>(RRBLUP<span class="op">$</span>Mean)</code></pre></div>
+</div>
+<div id="rrblup-package-1" class="section level3">
+<h3><a href="https://cran.r-project.org/web/packages/rrBLUP/index.html">rrBLUP</a> package</h3>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">RRBLUP2 &lt;-<span class="st"> </span><span class="kw">mixed.solve</span>(<span class="dt">y =</span> y, <span class="dt">Z =</span> Wc)
+<span class="kw">names</span>(RRBLUP2)
+
+<span class="co"># intercept</span>
+RRBLUP2<span class="op">$</span>beta
+<span class="co"># additive marker variance</span>
+RRBLUP2<span class="op">$</span>Vu
+<span class="co"># residual variance</span>
+RRBLUP2<span class="op">$</span>Ve
+<span class="co"># marker effects</span>
+<span class="kw">head</span>(RRBLUP2<span class="op">$</span>u)
+<span class="kw">tail</span>(RRBLUP2<span class="op">$</span>u)</code></pre></div>
+</div>
+</div>
+</div>
+
+
+</div>
+
+<div id="postamble" data-toggle="wy-nav-shift" class="status">
+<p class="author"><span class="glyphicon glyphicon-user"></span> Gota Morota</p>
+<p class="date"><span class="glyphicon glyphicon-calendar"></span> March 15, 2018</p>
+</div>
+
+
+<script>
+$(document).ready(function () {
+ 	  });
+</script>
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

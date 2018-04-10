@@ -1,0 +1,216 @@
+@article{sebastiani2007bayesian,
+  title={Bayesian estimates of linkage disequilibrium},
+  author={Sebastiani, Paola and Abad-Grau, Mar{\'\i}a M},
+  journal={BMC genetics},
+  volume={8},
+  number={1},
+  pages={36},
+  year={2007},
+  publisher={BioMed Central}
+}
+
+@article{hill1968linkage,
+  title={Linkage disequilibrium in finite populations},
+  author={Hill, WG and Robertson, Alan},
+  journal={Theoretical and Applied Genetics},
+  volume={38},
+  number={6},
+  pages={226--231},
+  year={1968},
+  publisher={Springer}
+}
+
+@article{forsberg2017accounting,
+  title={Accounting for genetic interactions improves modeling of individual quantitative trait phenotypes in yeast},
+  author={Forsberg, Simon KG and Bloom, Joshua S and Sadhu, Meru J and Kruglyak, Leonid and Carlborg, {\"O}rjan},
+  journal={Nature Genetics},
+  year={2017},
+  publisher={Nature Research}
+}
+
+@article{speed2015relatedness,
+  title={Relatedness in the post-genomic era: is it still useful?},
+  author={Speed, Doug and Balding, David J},
+  journal={Nature Reviews Genetics},
+  volume={16},
+  number={1},
+  pages={33--44},
+  year={2015},
+  publisher={Nature Research}
+}
+
+@article{lehermeier2013sensitivity,
+  title={Sensitivity to prior specification in Bayesian genome-based prediction models},
+  author={Lehermeier, Christina and Wimmer, Valentin and Albrecht, Theresa and Auinger, Hans-J{\"u}rgen and Gianola, Daniel and Schmid, Volker J and Sch{\"o}n, Chris-Carolin},
+  journal={Statistical applications in genetics and molecular biology},
+  volume={12},
+  number={3},
+  pages={375--391},
+  year={2013}
+}
+
+@article{goddard2009genomic,
+  title={Genomic selection: prediction of accuracy and maximisation of long term response},
+  author={Goddard, Mike},
+  journal={Genetica},
+  volume={136},
+  number={2},
+  pages={245--257},
+  year={2009},
+  publisher={Springer}
+}
+
+@article{li2012overview,
+  title={Overview of LASSO-related penalized regression methods for quantitative trait mapping and genomic selection},
+  author={Li, Zitong and Sillanp{\"a}{\"a}, Mikko J},
+  journal={Theoretical and Applied Genetics},
+  volume={125},
+  number={3},
+  pages={419--435},
+  year={2012},
+  publisher={Springer}
+}
+
+@article{habier2011extension,
+  title={Extension of the Bayesian alphabet for genomic selection},
+  author={Habier, David and Fernando, Rohan L and Kizilkaya, Kadir and Garrick, Dorian J},
+  journal={BMC bioinformatics},
+  volume={12},
+  number={1},
+  pages={186},
+  year={2011},
+  publisher={BioMed Central}
+}
+
+@article{hill2011variation,
+  title={Variation in actual relationship as a consequence of Mendelian sampling and linkage},
+  author={Hill, WG and Weir, Bruce Spencer},
+  journal={Genetics research},
+  volume={93},
+  number={01},
+  pages={47--64},
+  year={2011},
+  publisher={Cambridge Univ Press}
+}
+
+@article{yi2008bayesian,
+  title={Bayesian LASSO for quantitative trait loci mapping},
+  author={Yi, Nengjun and Xu, Shizhong},
+  journal={Genetics},
+  volume={179},
+  number={2},
+  pages={1045--1055},
+  year={2008},
+  publisher={Genetics Soc America}
+}
+
+@article{hayes2001prediction,
+  title={Prediction of total genetic value using genome-wide dense marker maps},
+  author={Hayes, BJ and Goddard, ME and others},
+  journal={Genetics},
+  volume={157},
+  number={4},
+  pages={1819--1829},
+  year={2001},
+  publisher={Genetics Soc America}
+}
+
+@article{heslot2014integrating,
+  title={Integrating environmental covariates and crop modeling into the genomic selection framework to predict genotype by environment interactions},
+  author={Heslot, Nicolas and Akdemir, Deniz and Sorrells, Mark E and Jannink, Jean-Luc},
+  journal={Theoretical and applied genetics},
+  volume={127},
+  number={2},
+  pages={463--480},
+  year={2014},
+  publisher={Springer}
+}
+
+@article{gianola2016cross,
+  title={Cross-validation without doing cross-validation in genome-enabled prediction},
+  author={Gianola, Daniel and Sch{\"o}n, Chris-Carolin},
+  journal={G3: Genes| Genomes| Genetics},
+  volume={6},
+  number={10},
+  pages={3107--3128},
+  year={2016},
+  publisher={Genetics Society of America}
+}
+
+@article{maki2014influence,
+  title={Influence of gene interaction on complex trait variation with multilocus models},
+  author={M{\"a}ki-Tanila, Asko and Hill, William G},
+  journal={Genetics},
+  volume={198},
+  number={1},
+  pages={355--367},
+  year={2014},
+  publisher={Genetics Soc America}
+}
+
+@article{de2013prediction,
+  title={Prediction of complex human traits using the genomic best linear unbiased predictor},
+  author={de los Campos, Gustavo and Vazquez, Ana I and Fernando, Rohan and Klimentidis, Yann C and Sorensen, Daniel},
+  journal={PLoS Genet},
+  volume={9},
+  number={7},
+  pages={e1003608},
+  year={2013},
+  publisher={Public Library of Science}
+}
+
+@article{yu2006unified,
+  title={A unified mixed-model method for association mapping that accounts for multiple levels of relatedness},
+  author={Yu, Jianming and Pressoir, Gael and Briggs, William H and Bi, Irie Vroh and Yamasaki, Masanori and Doebley, John F and McMullen, Michael D and Gaut, Brandon S and Nielsen, Dahlia M and Holland, James B and others},
+  journal={Nature genetics},
+  volume={38},
+  number={2},
+  pages={203--208},
+  year={2006},
+  publisher={Nature Publishing Group}
+}
+
+@article{hori2016multi,
+  title={Multi-task Gaussian process for imputing missing data in multi-trait and multi-environment trials},
+  author={Hori, Tomoaki and Montcho, David and Agbangla, Clement and Ebana, Kaworu and Futakuchi, Koichi and Iwata, Hiroyoshi},
+  journal={Theoretical and Applied Genetics},
+  volume={129},
+  number={11},
+  pages={2101--2115},
+  year={2016},
+  publisher={Springer}
+}
+
+@article{calus2008accuracy,
+  title={Accuracy of genomic selection using different methods to define haplotypes},
+  author={Calus, MPL and De Roos, APW and Veerkamp, RF and others},
+  journal={Genetics},
+  volume={178},
+  number={1},
+  pages={553--561},
+  year={2008},
+  publisher={Genetics Soc America}
+}
+
+@article{habier2013genomic,
+  title={Genomic BLUP decoded: a look into the black box of genomic prediction},
+  author={Habier, David and Fernando, Rohan L and Garrick, Dorian J},
+  journal={Genetics},
+  volume={194},
+  number={3},
+  pages={597--607},
+  year={2013},
+  publisher={Genetics Soc America}
+}
+
+@article{monnahan2015epistasis,
+  title={Epistasis is a major determinant of the additive genetic variance in Mimulus guttatus},
+  author={Monnahan, Patrick J and Kelly, John K},
+  journal={PLoS Genet},
+  volume={11},
+  number={5},
+  pages={e1005201},
+  year={2015},
+  publisher={Public Library of Science}
+}
+

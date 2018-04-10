@@ -24,49 +24,49 @@ out=out$x
 # 3 --> 2
 out[out==2]=NA
 out[out==3]=2
-X=matrix(out,nrow=p,ncol=n,byrow=TRUE)
-X=t(X)
+W=matrix(out,nrow=p,ncol=n,byrow=TRUE)
+W=t(W)
 
 # genotype imputation
-for (j in 1:ncol(X)){
-  X[,j] <- ifelse(is.na(X[,j]), mean(X[,j], na.rm=TRUE), X[,j])
+for (j in 1:ncol(W)){
+  W[,j] <- ifelse(is.na(W[,j]), mean(W[,j], na.rm=TRUE), W[,j])
 }
 
 # accession ID
 fam <- read.table("../../../2016/ASCI896/day16/RiceDiversity_44K_Genotypes_PLINK/sativas413.fam", header = FALSE, stringsAsFactors = FALSE)
 head(fam)
-rownames(X) <- fam$V2 # 413 x 36901
+rownames(W) <- fam$V2 # 413 x 36901
 
 # MAF=0.05
-p <- colSums(X) / (2*nrow(X))
+p <- colSums(W) / (2*nrow(W))
 maf <- ifelse(p > 0.5, 1-p, p)
 maf.index <- which(maf < 0.05)
-X <- X[, -maf.index]  # 413 x 33701
+W <- W[, -maf.index]  # 413 x 33701
 
 # phenotypes
-rice.pheno <- read.table("https://ricediversity.org/data/sets/44kgwas/RiceDiversity_44K_Phenotypes_34traits_PLINK.txt", header = TRUE, stringsAsFactors = FALSE, sep = "\t")
-table(rownames(X) == rice.pheno$NSFTVID)
+rice.pheno <- read.table("http://ricediversity.org/data/sets/44kgwas/RiceDiversity_44K_Phenotypes_34traits_PLINK.txt", header = TRUE, stringsAsFactors = FALSE, sep = "\t")
+table(rownames(W) == rice.pheno$NSFTVID)
 y <- rice.pheno$Flowering.time.at.Arkansas # # use the first trait 
 index <- !is.na(y)
 y <- y[index] # 374
-X <- X[index,] # 374 33701
+W <- W[index,] # 374 33701
 ```
 
 ## Bayesian ridge regression 
 ```{r, eval=FALSE}
 # training - testing sets partition
 set.seed(0728)
-tst <- sample(1:nrow(X), size=80)
+tst <- sample(1:nrow(W), size=80)
 y.na <- y
 y.na[tst] <- NA
 
 # user specified priors
-ETA <- list(MRK=list(X = X, df0 = 5, S0 = 1, model="BRR"))
+ETA <- list(MRK=list(X = W, df0 = 5, S0 = 1, model="BRR"))
 fit.BRR <- BGLR(y = y.na, ETA = ETA, nIter = 1000, burnIn = 500, verbose = TRUE)
 cor(y[tst], fit.BRR$yHat[tst])
 
 # rule-based priors
-ETA <- list(MRK=list(X = X, model="BRR"))
+ETA <- list(MRK=list(X = W, model="BRR"))
 fit.BRR <- BGLR(y = y.na, ETA = ETA, nIter = 1000, burnIn = 500, verbose = FALSE)
 cor(y[tst], fit.BRR$yHat[tst])
 ```
@@ -75,17 +75,17 @@ cor(y[tst], fit.BRR$yHat[tst])
 ```{r, eval=FALSE}
 # training - testing sets partition
 set.seed(0728)
-tst <- sample(1:nrow(X), size=80)
+tst <- sample(1:nrow(W), size=80)
 y.na <- y
 y.na[tst] <- NA
 
 # user specified priors
-ETA <- list(MRK=list(X = X, type="gamma", lambda=10, shape=1.1, rate=0.5, model="BL"))
+ETA <- list(MRK=list(X = W, type="gamma", lambda=10, shape=1.1, rate=0.5, model="BL"))
 fit.BL <- BGLR(y = y.na, ETA = ETA, nIter = 1000, burnIn = 500, verbose = TRUE)
 cor(y[tst], fit.BL$yHat[tst])
 
 # rule-based priors 
-ETA <- list(MRK=list(X = X, model="BL"))
+ETA <- list(MRK=list(X = W, model="BL"))
 fit.BL <- BGLR(y = y.na, ETA = ETA, nIter = 1000, burnIn = 500, verbose = TRUE)
 cor(y[tst], fit.BL$yHat[tst])
 ```

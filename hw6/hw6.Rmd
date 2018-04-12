@@ -1,0 +1,194 @@
+---
+title: "ASCI 944 / STAT 844 Quantitative Methods for Genomics of Complex Traits"
+subtitle: "Homework assignment 6"
+author: "Gota Morota"
+date: "April 12, 2018"
+output:
+  rmdformats::readthedown:
+    highlight: kate
+    self_contained: false
+    code_folding: hide
+---
+
+```{r knitr_init, echo=FALSE, cache=FALSE}
+library(knitr)
+library(rmdformats)
+
+## Global options
+options(max.print="75")
+opts_chunk$set(echo=TRUE,
+	             cache=TRUE,
+               prompt=FALSE,
+               tidy=TRUE,
+               comment=NA,
+               message=FALSE,
+               warning=FALSE)
+opts_knit$set(width=75)
+```
+
+### Due date
+Thursday, April 19, 5pm
+
+## Data 
+This homework assignment involves data analysis of 280 winter wheat accessions genotyped with 1083 Diversity Array Technology (DArT) markers at 9 locations. Phenotypes available are grain yield, grain volume weight, plant height, and flowering date. Both phenotypic and genotypic data are downloadable from [DRYAD](http://datadryad.org/resource/doi:10.5061/dryad.2sk59). 
+```{r, eval=FALSE}
+# phenotypes 
+pheno <- read.csv("http://datadryad.org/bitstream/handle/10255/dryad.40880/phenotype.csv?sequence=1", header = TRUE, stringsAsFactors = FALSE)
+pheno1 <- subset(pheno, Location ==1) # use location 1
+
+# DArt markers 
+library(readxl)
+geno1 <- read_excel("DartGenot.xls", col_names=TRUE, sheet=2, skip=3, na="-")
+geno2 <- read_excel("DartGenot.xls", col_names=TRUE, sheet=3, skip=3, na="-")
+geno3 <- read_excel("DartGenot.xls", col_names=TRUE, sheet=4, skip=3, na="-")
+table(geno1[,1:7] == geno2[,1:7]) 
+table(geno1[,1:7] == geno3[,1:7])
+table(geno2[,1:7] == geno3[,1:7])
+geno4 <- cbind(geno1, geno2[,-c(1:7)], geno3[, -c(1:7)])
+```
+
+## Quality control
+```{r, eval=FALSE}
+# quality control
+qc.callrate <- which(geno4$CallRate < 95)
+qc.p <- which(geno4$P < 80)
+qc.index <- unique(c(qc.callrate, qc.p))
+length(qc.index) # 1234
+geno5 <- geno4[-qc.index, ]
+geno6 <- t(geno5[,-c(1:7)])
+```
+
+## Data cleaning 
+Check if the phenotype and genotype files have the same accessions. 
+```{r, eval=FALSE}
+# phenotype -> genotype
+table(pheno1[,2] %in% rownames(geno6))
+na1a.index <- which(!pheno1[,2] %in% rownames(geno6))
+pheno1[c(na1a.index),2] # "NE10522" "NW10568" "NE10570" "NE10583" -> found in the phenotype file but in the genotype file 
+
+# genotype -> phenotype 
+table(rownames(geno6) %in% pheno1[,2])
+na1b.index <- which(!rownames(geno6) %in% pheno1[,2])
+rownames(geno6)[c(na1b.index)] # "Goodstreak" "Camelot" -> found in the genotype file but in the phenotype file 
+
+pheno1a <- pheno1[match(rownames(geno6), pheno1[,2]), ]
+pheno1b <- pheno1a[-c(277:278), ]
+geno7 <- geno6[-c(277:278), ]
+table(pheno1b[,2] == rownames(geno7), useNA = "always")
+table(pheno1b[,2] %in% rownames(geno7))
+table(rownames(geno7) %in% pheno1b[,2])
+
+# final phenotype object 
+y <- pheno1b$yield # use grain yield 
+
+# final genotype object 
+geno <- geno7 # 276 x 747
+```
+
+## Question 1
+Replace missing marker genotypes with mean values. Then store the marker genotypes in a matrix object `X`.
+```{r, eval=FALSE, echo=FALSE}
+X <- matrix(0, ncol=ncol(geno), nrow=nrow(geno))
+for (j in 1:ncol(geno)){
+  #cat("j = ", j, '\n')
+  X[,j] <- ifelse(is.na(geno[,j]), mean(geno[,j], na.rm=TRUE), geno[,j])
+}
+```
+
+## Question 2
+Perform a quality control by removing markers with MAF < 0.05. How many markers are removed? Save the filtered genotype matrix in `X2`.
+```{r, eval=FALSE, echo=FALSE}
+freq <- colMeans(X)
+maf <- ifelse(freq > 0.5, 1-freq, freq)
+maf.index <- which(maf < 0.05)
+length(maf.index)
+X2 <- X[, -maf.index]
+dim(X2)
+```
+
+## Question 3
+Standardize the genotype matrix from Question 2 to have a mean of zero and variance of one. Save this matrix as `Xs`.
+```{r, eval=FALSE, echo=FALSE}
+Xs <- scale(X2, center = TRUE, scale = TRUE)
+```
+
+## Question 4
+We will determine a prior for marker effects in Bayesian ridge regression. Read Perez and de los Campos (2014) ([10.1534/genetics.114.164442](www.dx.doi.org/10.1534/genetics.114.164442)) to learn more about the BGLR R package. 
+Recall that genetic variance is given by $Var(g_i) = \sigma^2_b \sum^m_{j=1} Var(x_{ij})$. We can equate this $\sigma^2_b \times \sum^m_{j=1} Var(x_{ij})$ to the product of our prior expectation about the expected proportion of variance that is explained by the regression times an estimate of the phenotypic variance  $\sigma^2_b \times \sum^m_{j=1} Var(x_{ij}) = R^2 V_y$. This results in $\sigma^2_b  = \frac{R^2 V_y}{\sum^m_{j=1} Var(x_{ij})}$. 
+Then equating this to the prior mode of the variance parameter of scaled-inverse chi square density gives $\frac{R^2 V_y}{\sum^m_{j=1} Var(x_{ij})} =  \frac{S_b}{df_b + 2}$, where $S_b$ and $df_b$ are the prior scale and degrees of freedom of marker effects, respectively. Then solving for the prior scale parameter $S_b$ yields $S_b =  \frac{R^2 V_y}{\sum^m_{j=1} Var(x_{ij})} (df_b + 2)$. Compute the prior scale $S_b$ for the wheat data set according to the above derivation. Use $df_b = 5$ and $R^2 = 0.5$.
+```{r, eval=FALSE, echo=FALSE}
+# prior for Baysian ridge regression - \sum (Var(\sum^m_{j=1}x_{ij} ) )
+x2 <- sum(apply(X=Xs, MARGIN = 2, FUN = var))
+MSx <- x2
+R2 <- 0.5
+(R2 * var(y) * (5+2)) / MSx # 0.3253088
+```
+
+## Question 5
+Alternatively, we can use $Var(g_i) = \sigma^2_b \times n^{-1} \sum^n_{i=1} \sum^m_{j=1}x^2_{ij}$, where $n^{-1} \sum^n_{i=1} \sum^m_{j=1}x_{ij}^2$ is the average sum of squares of the genotypes. Recompute the prior scale $S_b$ based on this parameterization. Again, use $df_b = 5$ and $R^2 = 0.5$.
+```{r, eval=FALSE, echo=FALSE}
+# prior for Bayesian ridge regression - \sum^n_{i=1}\sum^m_{j=1}x^2_{ij} / n
+x2 <- sum(apply(X = Xs, MARGIN = 2, function(x) sum(x^2))) # sum(Xs*Xs)
+x2mean = sum((apply(X = Xs, MARGIN = 2, mean))^2)
+MSx <- x2/nrow(Xs) - x2mean
+R2 <- 0.5
+(R2 * var(y) * (5+2)) / MSx # 0.326491
+```
+
+## Question 6
+Report a prior scale $S_b$ used for Bayesian ridge regression with default setting in the BGLR function. Which of the above rule-based priors is used in the BGLR? Hint: set `nIter` = 1, `burnIn` = 1 so that you can see the output. 
+```{r, eval=FALSE, echo=FALSE}
+library(BGLR)
+# rule-based prior 
+ETA <- list(MRK=list(X = Xs, model="BRR"))
+fit.BRR <- BGLR(y = y, ETA = ETA, nIter = 1, burnIn = 1)
+```
+
+
+## Question 7
+Evaluate predictive performance of the Bayesian ridge regression model by repeating 3-fold cross-validation 5 times. Use `set.seed(0403)` at the begining of the code so that your analysis is reporducible. 
+```{r, eval=FALSE, echo=FALSE}
+library(BGLR)
+set.seed(0403)
+r2 <- array()
+for (i in 1:5){
+  folds <- 3
+  partition <- sample(1:3, size=nrow(Xs), replace = TRUE)
+  r1 <- array()
+  for (j in 1:folds){
+    y.na <- y
+    tst <- which(partition == j)
+    y.na[tst] <- NA
+    ETA <- list(MRK=list(X = Xs, model="BRR"))
+    fit.BRR <- BGLR(y = y.na, ETA = ETA, nIter = 5000, burnIn = 2000, verbose = FALSE)
+    r1[j] <- cor(y[tst], fit.BRR$yHat[tst])
+  }
+  r2[i] <- mean(r1)
+}
+mean(r2) 
+```
+
+
+## Question 8
+Evaluate predictive performance of the Bayesian LASSO regression model by repeating 3-fold cross-validation 5 times. Use `set.seed(0403)` at the begining of the code so that your analysis is reporducible. Compare predictive accuracies between the Bayesian ridge regression and Bayesian LASSO. 
+```{r, eval=FALSE, echo=FALSE}
+library(BGLR)
+set.seed(0403)
+r2 <- array()
+for (i in 1:5){
+  folds <- 3
+  partition <- sample(1:3, size=nrow(Xs), replace = TRUE)
+  r1 <- array()
+  for (j in 1:folds){
+    y.na <- y
+    tst <- which(partition == j)
+    y.na[tst] <- NA
+    ETA <- list(MRK=list(X = Xs, model="BL"))
+    fit.BRR <- BGLR(y = y.na, ETA = ETA, nIter = 5000, burnIn = 2000, verbose = FALSE)
+    r1[j] <- cor(y[tst], fit.BRR$yHat[tst])
+  }
+  r2[i] <- mean(r1)
+}
+mean(r2) 
+```
+

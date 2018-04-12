@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<meta charset="utf-8">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="pandoc" />
+
+<meta name="author" content="Gota Morota" />
+
+<meta name="date" content="2018-04-12" />
+
+<title>ASCI 944 / STAT 844 Quantitative Methods for Genomics of Complex Traits</title>
+
+<script src="hw6_files/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="hw6_files/bootstrap-3.3.6/css/bootstrap.min.css" rel="stylesheet" />
+<script src="hw6_files/bootstrap-3.3.6/js/bootstrap.min.js"></script>
+<script src="hw6_files/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<script src="hw6_files/navigation-1.1/tabsets.js"></script>
+<script src="hw6_files/navigation-1.1/codefolding.js"></script>
+<link href="hw6_files/magnific-popup-1.1.0/magnific-popup.css" rel="stylesheet" />
+<script src="hw6_files/magnific-popup-1.1.0/jquery.magnific-popup.min.js"></script>
+<link href="hw6_files/readthedown-0.1/readthedown.css" rel="stylesheet" />
+<script src="hw6_files/readthedown-0.1/readthedown.js"></script>
+
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+div.sourceCode { overflow-x: auto; }
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; background-color: #ffffff; color: #1f1c1b; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; background-color: #ffffff; color: #a0a0a0; border-right: 1px solid #a0a0a0; }
+td.sourceCode { padding-left: 5px; }
+pre, code { color: #1f1c1b; background-color: #ffffff; }
+code > span.kw { color: #1f1c1b; font-weight: bold; } /* Keyword */
+code > span.dt { color: #0057ae; } /* DataType */
+code > span.dv { color: #b08000; } /* DecVal */
+code > span.bn { color: #b08000; } /* BaseN */
+code > span.fl { color: #b08000; } /* Float */
+code > span.cn { color: #aa5500; } /* Constant */
+code > span.ch { color: #924c9d; } /* Char */
+code > span.sc { color: #3daee9; } /* SpecialChar */
+code > span.st { color: #bf0303; } /* String */
+code > span.vs { color: #bf0303; } /* VerbatimString */
+code > span.ss { color: #ff5500; } /* SpecialString */
+code > span.im { color: #ff5500; } /* Import */
+code > span.co { color: #898887; } /* Comment */
+code > span.do { color: #607880; } /* Documentation */
+code > span.an { color: #ca60ca; } /* Annotation */
+code > span.cv { color: #0095ff; } /* CommentVar */
+code > span.ot { color: #006e28; } /* Other */
+code > span.fu { color: #644a9b; } /* Function */
+code > span.va { color: #0057ae; } /* Variable */
+code > span.cf { color: #1f1c1b; font-weight: bold; } /* ControlFlow */
+code > span.op { color: #1f1c1b; } /* Operator */
+code > span.bu { color: #644a9b; font-weight: bold; } /* BuiltIn */
+code > span.ex { color: #0095ff; font-weight: bold; } /* Extension */
+code > span.pp { color: #006e28; } /* Preprocessor */
+code > span.at { color: #0057ae; } /* Attribute */
+code > span.re { color: #0057ae; } /* RegionMarker */
+code > span.in { color: #b08000; } /* Information */
+code > span.wa { color: #bf0303; } /* Warning */
+code > span.al { color: #bf0303; font-weight: bold; } /* Alert */
+code > span.er { color: #bf0303; text-decoration: underline; } /* Error */
+code > span. { color: #1f1c1b; } /* Normal */
+</style>
+
+
+</head>
+
+<body>
+
+
+<div id="content" data-toggle="wy-nav-shift">
+
+<!-- tabsets -->
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+</script>
+
+<!-- code folding -->
+<script>
+$(document).ready(function () {
+  window.initializeCodeFolding("hide" === "show");
+});
+</script>
+
+<nav id="nav-top" role="navigation" aria-label="top navigation">
+    <a role="button" href="#" data-toggle="wy-nav-top"><span class="glyphicon glyphicon-menu-hamburger"></span></a>
+</nav>
+
+<div class="btn-group pull-right">
+<button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span class="text-muted">Code</span> <span class="text-muted caret"></span></button>
+<ul class="dropdown-menu" style="min-width: 50px;">
+<li><a id="rmd-show-all-code" href="#">Show All</a></li>
+<li><a id="rmd-hide-all-code" href="#">Hide All</a></li>
+</ul>
+</div>
+
+<div id="header">
+<h1 class="title">ASCI 944 / STAT 844 Quantitative Methods for Genomics of Complex Traits</h1>
+<h1 class="subtitle">Homework assignment 6</h1>
+</div>
+
+
+<div id="table-of-contents">
+    <h2><a href="#content">ASCI 944 / STAT 844 Quantitative Methods for Genomics of Complex Traits</a></h2>
+    <div id="text-table-of-contents">
+      <ul>
+      <li><a href="#data">Data</a></li>
+      <li><a href="#quality-control">Quality control</a></li>
+      <li><a href="#data-cleaning">Data cleaning</a></li>
+      <li><a href="#question-1">Question 1</a></li>
+      <li><a href="#question-2">Question 2</a></li>
+      <li><a href="#question-3">Question 3</a></li>
+      <li><a href="#question-4">Question 4</a></li>
+      <li><a href="#question-5">Question 5</a></li>
+      <li><a href="#question-6">Question 6</a></li>
+      <li><a href="#question-7">Question 7</a></li>
+      <li><a href="#question-8">Question 8</a></li>
+      </ul>
+    </div>
+</div>
+
+<div id="main">
+<div id="due-date" class="section level3">
+<h3>Due date</h3>
+<p>Thursday, April 19, 5pm</p>
+</div>
+<div id="data" class="section level2">
+<h2>Data</h2>
+<p>This homework assignment involves data analysis of 280 winter wheat accessions genotyped with 1083 Diversity Array Technology (DArT) markers at 9 locations. Phenotypes available are grain yield, grain volume weight, plant height, and flowering date. Both phenotypic and genotypic data are downloadable from <a href="http://datadryad.org/resource/doi:10.5061/dryad.2sk59">DRYAD</a>.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># phenotypes</span>
+pheno &lt;-<span class="st"> </span><span class="kw">read.csv</span>(<span class="st">&quot;http://datadryad.org/bitstream/handle/10255/dryad.40880/phenotype.csv?sequence=1&quot;</span>, 
+    <span class="dt">header =</span> <span class="ot">TRUE</span>, <span class="dt">stringsAsFactors =</span> <span class="ot">FALSE</span>)
+pheno1 &lt;-<span class="st"> </span><span class="kw">subset</span>(pheno, Location <span class="op">==</span><span class="st"> </span><span class="dv">1</span>)  <span class="co"># use location 1</span>
+
+<span class="co"># DArt markers</span>
+<span class="kw">library</span>(readxl)
+geno1 &lt;-<span class="st"> </span><span class="kw">read_excel</span>(<span class="st">&quot;DartGenot.xls&quot;</span>, <span class="dt">col_names =</span> <span class="ot">TRUE</span>, <span class="dt">sheet =</span> <span class="dv">2</span>, <span class="dt">skip =</span> <span class="dv">3</span>, 
+    <span class="dt">na =</span> <span class="st">&quot;-&quot;</span>)
+geno2 &lt;-<span class="st"> </span><span class="kw">read_excel</span>(<span class="st">&quot;DartGenot.xls&quot;</span>, <span class="dt">col_names =</span> <span class="ot">TRUE</span>, <span class="dt">sheet =</span> <span class="dv">3</span>, <span class="dt">skip =</span> <span class="dv">3</span>, 
+    <span class="dt">na =</span> <span class="st">&quot;-&quot;</span>)
+geno3 &lt;-<span class="st"> </span><span class="kw">read_excel</span>(<span class="st">&quot;DartGenot.xls&quot;</span>, <span class="dt">col_names =</span> <span class="ot">TRUE</span>, <span class="dt">sheet =</span> <span class="dv">4</span>, <span class="dt">skip =</span> <span class="dv">3</span>, 
+    <span class="dt">na =</span> <span class="st">&quot;-&quot;</span>)
+<span class="kw">table</span>(geno1[, <span class="dv">1</span><span class="op">:</span><span class="dv">7</span>] <span class="op">==</span><span class="st"> </span>geno2[, <span class="dv">1</span><span class="op">:</span><span class="dv">7</span>])
+<span class="kw">table</span>(geno1[, <span class="dv">1</span><span class="op">:</span><span class="dv">7</span>] <span class="op">==</span><span class="st"> </span>geno3[, <span class="dv">1</span><span class="op">:</span><span class="dv">7</span>])
+<span class="kw">table</span>(geno2[, <span class="dv">1</span><span class="op">:</span><span class="dv">7</span>] <span class="op">==</span><span class="st"> </span>geno3[, <span class="dv">1</span><span class="op">:</span><span class="dv">7</span>])
+geno4 &lt;-<span class="st"> </span><span class="kw">cbind</span>(geno1, geno2[, <span class="op">-</span><span class="kw">c</span>(<span class="dv">1</span><span class="op">:</span><span class="dv">7</span>)], geno3[, <span class="op">-</span><span class="kw">c</span>(<span class="dv">1</span><span class="op">:</span><span class="dv">7</span>)])</code></pre></div>
+</div>
+<div id="quality-control" class="section level2">
+<h2>Quality control</h2>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># quality control</span>
+qc.callrate &lt;-<span class="st"> </span><span class="kw">which</span>(geno4<span class="op">$</span>CallRate <span class="op">&lt;</span><span class="st"> </span><span class="dv">95</span>)
+qc.p &lt;-<span class="st"> </span><span class="kw">which</span>(geno4<span class="op">$</span>P <span class="op">&lt;</span><span class="st"> </span><span class="dv">80</span>)
+qc.index &lt;-<span class="st"> </span><span class="kw">unique</span>(<span class="kw">c</span>(qc.callrate, qc.p))
+<span class="kw">length</span>(qc.index)  <span class="co"># 1234</span>
+geno5 &lt;-<span class="st"> </span>geno4[<span class="op">-</span>qc.index, ]
+geno6 &lt;-<span class="st"> </span><span class="kw">t</span>(geno5[, <span class="op">-</span><span class="kw">c</span>(<span class="dv">1</span><span class="op">:</span><span class="dv">7</span>)])</code></pre></div>
+</div>
+<div id="data-cleaning" class="section level2">
+<h2>Data cleaning</h2>
+<p>Check if the phenotype and genotype files have the same accessions.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># phenotype -&gt; genotype</span>
+<span class="kw">table</span>(pheno1[, <span class="dv">2</span>] <span class="op">%in%</span><span class="st"> </span><span class="kw">rownames</span>(geno6))
+na1a.index &lt;-<span class="st"> </span><span class="kw">which</span>(<span class="op">!</span>pheno1[, <span class="dv">2</span>] <span class="op">%in%</span><span class="st"> </span><span class="kw">rownames</span>(geno6))
+pheno1[<span class="kw">c</span>(na1a.index), <span class="dv">2</span>]  <span class="co"># &#39;NE10522&#39; &#39;NW10568&#39; &#39;NE10570&#39; &#39;NE10583&#39; -&gt; found in the phenotype file but in the genotype file </span>
+
+<span class="co"># genotype -&gt; phenotype</span>
+<span class="kw">table</span>(<span class="kw">rownames</span>(geno6) <span class="op">%in%</span><span class="st"> </span>pheno1[, <span class="dv">2</span>])
+na1b.index &lt;-<span class="st"> </span><span class="kw">which</span>(<span class="op">!</span><span class="kw">rownames</span>(geno6) <span class="op">%in%</span><span class="st"> </span>pheno1[, <span class="dv">2</span>])
+<span class="kw">rownames</span>(geno6)[<span class="kw">c</span>(na1b.index)]  <span class="co"># &#39;Goodstreak&#39; &#39;Camelot&#39; -&gt; found in the genotype file but in the phenotype file </span>
+
+pheno1a &lt;-<span class="st"> </span>pheno1[<span class="kw">match</span>(<span class="kw">rownames</span>(geno6), pheno1[, <span class="dv">2</span>]), ]
+pheno1b &lt;-<span class="st"> </span>pheno1a[<span class="op">-</span><span class="kw">c</span>(<span class="dv">277</span><span class="op">:</span><span class="dv">278</span>), ]
+geno7 &lt;-<span class="st"> </span>geno6[<span class="op">-</span><span class="kw">c</span>(<span class="dv">277</span><span class="op">:</span><span class="dv">278</span>), ]
+<span class="kw">table</span>(pheno1b[, <span class="dv">2</span>] <span class="op">==</span><span class="st"> </span><span class="kw">rownames</span>(geno7), <span class="dt">useNA =</span> <span class="st">&quot;always&quot;</span>)
+<span class="kw">table</span>(pheno1b[, <span class="dv">2</span>] <span class="op">%in%</span><span class="st"> </span><span class="kw">rownames</span>(geno7))
+<span class="kw">table</span>(<span class="kw">rownames</span>(geno7) <span class="op">%in%</span><span class="st"> </span>pheno1b[, <span class="dv">2</span>])
+
+<span class="co"># final phenotype object</span>
+y &lt;-<span class="st"> </span>pheno1b<span class="op">$</span>yield  <span class="co"># use grain yield </span>
+
+<span class="co"># final genotype object</span>
+geno &lt;-<span class="st"> </span>geno7  <span class="co"># 276 x 747</span></code></pre></div>
+</div>
+<div id="question-1" class="section level2">
+<h2>Question 1</h2>
+<p>Replace missing marker genotypes with mean values. Then store the marker genotypes in a matrix object <code>X</code>.</p>
+</div>
+<div id="question-2" class="section level2">
+<h2>Question 2</h2>
+<p>Perform a quality control by removing markers with MAF &lt; 0.05. How many markers are removed? Save the filtered genotype matrix in <code>X2</code>.</p>
+</div>
+<div id="question-3" class="section level2">
+<h2>Question 3</h2>
+<p>Standardize the genotype matrix from Question 2 to have a mean of zero and variance of one. Save this matrix as <code>Xs</code>.</p>
+</div>
+<div id="question-4" class="section level2">
+<h2>Question 4</h2>
+<p>We will determine a prior for marker effects in Bayesian ridge regression. Read Perez and de los Campos (2014) (<a href="www.dx.doi.org/10.1534/genetics.114.164442">10.1534/genetics.114.164442</a>) to learn more about the BGLR R package. Recall that genetic variance is given by <span class="math inline">\(Var(g_i) = \sigma^2_b \sum^m_{j=1} Var(x_{ij})\)</span>. We can equate this <span class="math inline">\(\sigma^2_b \times \sum^m_{j=1} Var(x_{ij})\)</span> to the product of our prior expectation about the expected proportion of variance that is explained by the regression times an estimate of the phenotypic variance <span class="math inline">\(\sigma^2_b \times \sum^m_{j=1} Var(x_{ij}) = R^2 V_y\)</span>. This results in <span class="math inline">\(\sigma^2_b = \frac{R^2 V_y}{\sum^m_{j=1} Var(x_{ij})}\)</span>. Then equating this to the prior mode of the variance parameter of scaled-inverse chi square density gives <span class="math inline">\(\frac{R^2 V_y}{\sum^m_{j=1} Var(x_{ij})} = \frac{S_b}{df_b + 2}\)</span>, where <span class="math inline">\(S_b\)</span> and <span class="math inline">\(df_b\)</span> are the prior scale and degrees of freedom of marker effects, respectively. Then solving for the prior scale parameter <span class="math inline">\(S_b\)</span> yields <span class="math inline">\(S_b = \frac{R^2 V_y}{\sum^m_{j=1} Var(x_{ij})} (df_b + 2)\)</span>. Compute the prior scale <span class="math inline">\(S_b\)</span> for the wheat data set according to the above derivation. Use <span class="math inline">\(df_b = 5\)</span> and <span class="math inline">\(R^2 = 0.5\)</span>.</p>
+</div>
+<div id="question-5" class="section level2">
+<h2>Question 5</h2>
+<p>Alternatively, we can use <span class="math inline">\(Var(g_i) = \sigma^2_b \times n^{-1} \sum^n_{i=1} \sum^m_{j=1}x^2_{ij}\)</span>, where <span class="math inline">\(n^{-1} \sum^n_{i=1} \sum^m_{j=1}x_{ij}^2\)</span> is the average sum of squares of the genotypes. Recompute the prior scale <span class="math inline">\(S_b\)</span> based on this parameterization. Again, use <span class="math inline">\(df_b = 5\)</span> and <span class="math inline">\(R^2 = 0.5\)</span>.</p>
+</div>
+<div id="question-6" class="section level2">
+<h2>Question 6</h2>
+<p>Report a prior scale <span class="math inline">\(S_b\)</span> used for Bayesian ridge regression with default setting in the BGLR function. Which of the above rule-based priors is used in the BGLR? Hint: set <code>nIter</code> = 1, <code>burnIn</code> = 1 so that you can see the output.</p>
+</div>
+<div id="question-7" class="section level2">
+<h2>Question 7</h2>
+<p>Evaluate predictive performance of the Bayesian ridge regression model by repeating 3-fold cross-validation 5 times. Use <code>set.seed(0403)</code> at the begining of the code so that your analysis is reporducible.</p>
+</div>
+<div id="question-8" class="section level2">
+<h2>Question 8</h2>
+<p>Evaluate predictive performance of the Bayesian LASSO regression model by repeating 3-fold cross-validation 5 times. Use <code>set.seed(0403)</code> at the begining of the code so that your analysis is reporducible. Compare predictive accuracies between the Bayesian ridge regression and Bayesian LASSO.</p>
+</div>
+</div>
+
+
+</div>
+
+<div id="postamble" data-toggle="wy-nav-shift" class="status">
+<p class="author"><span class="glyphicon glyphicon-user"></span> Gota Morota</p>
+<p class="date"><span class="glyphicon glyphicon-calendar"></span> April 12, 2018</p>
+</div>
+
+
+<script>
+$(document).ready(function () {
+ 	  });
+</script>
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,104 @@
+---
+title: "ASCI 944 / STAT 844 Quantitative Methods for Genomics of Complex Traits"
+output: 
+  BiocStyle::html_document
+---
+
+# Gaussian kernel 
+Ornella et al. (2014) ([doi:10.1038/hdy.2013.144](http://dx.doi.org/10.1038/hdy.2013.144)) analyzed 14 and 16 trait–environment combinations in maize and wheat, respectively. You can download the wheat stem rust—main season data set in `Wheat-Stem Rust.zip` from the [CIMMYT data repository](http://repository.cimmyt.org/xmlui/handle/10883/2976). 
+
+## Data loading (X $\in (0, 1)$)
+```{r}
+load("StemRust/SR_F6PAV0N_Srm.RData") 
+```
+
+## Impute missing genotypes by mean values 
+```{r}
+X <- matrix(0, ncol=ncol(Markers), nrow=nrow(Markers))
+for (j in 1:ncol(Markers)){
+   X[,j] <- ifelse(is.na(Markers[,j]), mean(Markers[,j], na.rm=TRUE), Markers[,j])
+}
+```
+
+## Remove markers with MAF < 0.01
+```{r}
+freq <- colMeans(X) # X \in (0,1)
+maf <- ifelse(freq > 0.5, 1-freq, freq)
+maf.index <- which(maf < 0.01)
+length(maf.index)
+X <- X[, -maf.index] #  176 x 931
+```
+
+## Define G matrix and Gaussian kernel functions
+```{r}
+# G matrix
+computeG <- function(X){
+  X <- scale(X, center = TRUE, scale = TRUE)
+  p <- ncol(X)
+  G <- tcrossprod(X) / p
+  return(G)
+}
+
+# Gaussian kernel matrix
+computeGK <- function(X, bw){
+  X <- scale(X, center = TRUE, scale = TRUE)
+  D<- as.matrix(dist(X, method="euclidean"))^2
+  D <- D/mean(D) # or just use D
+  GK <- exp(-bw * D) 
+  return(GK)
+}
+```
+
+## Comparison 1
+```{r}
+# G matrix
+G <- computeG(X)
+hist(G[upper.tri(G)], main="", xlab="G(i,i')")
+
+# GK with theta = 1.0
+GK1.0 <- computeGK(X, bw=1.0)
+hist(GK1.0[upper.tri(GK1.0)], main="", xlab="K(i,i')")
+title(substitute(theta == 1.0))
+
+# GK with theta = 0.7
+GK0.7 <- computeGK(X, bw=0.7)
+hist(GK0.7[upper.tri(GK0.7)], main="", xlab="K(i,i')")
+title(substitute(theta == 0.7))
+
+# GK with theta = 0.1
+GK0.1 <- computeGK(X, bw=0.1)
+hist(GK0.1[upper.tri(GK0.1)], main="", xlab="K(i,i')")
+title(substitute(theta == 0.1))
+```
+
+
+## Comparison 2 
+```{r}
+par(mfrow=c(2,2))
+G <- computeG(X)
+hist(G[upper.tri(G)], main="", xlab="G(i,i')")
+GK1.0 <- computeGK(X, bw=1.0)
+hist(GK1.0[upper.tri(GK1.0)], main="", xlab="K(i,i')")
+title(substitute(theta == 1.0))
+GK0.7 <- computeGK(X, bw=0.7)
+hist(GK0.7[upper.tri(GK0.7)], main="", xlab="K(i,i')")
+title(substitute(theta == 0.7))
+GK0.1 <- computeGK(X, bw=0.1)
+hist(GK0.1[upper.tri(GK0.1)], main="", xlab="K(i,i')")
+title(substitute(theta == 0.1))
+dev.off()
+```
+
+## Multi-kernel RKHS regression
+```{r}
+library(BGLR)
+set.seed(0728)
+tst <- sample(1:nrow(X), size=76)
+y.na <- y
+y.na[tst] <- NA
+
+ETA <- list(K1=list(K = GK1.0, model="RKHS"), K2=list(K = GK0.1, model="RKHS"))
+fit.RKHS <- BGLR(y = y.na, ETA = ETA, nIter = 5000, burnIn = 2000, verbose = FALSE)
+cor(y[tst], fit.RKHS$yHat[tst])
+```
+
